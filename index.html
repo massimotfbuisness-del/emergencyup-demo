@@ -238,6 +238,130 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .dot-gray { background: var(--gray-400); }
 .mock-label { font-size: 10px; background: #fff3e0; color: #e65100; padding: 1px 6px; border-radius: 4px; font-weight: 600; vertical-align: middle; margin-left: 4px; }
 
+/* ══════════════════════════════════════
+   MOBILE RESPONSIVE
+══════════════════════════════════════ */
+
+/* Hamburger button — hidden on desktop */
+.hamburger { display: none; background: none; border: none; cursor: pointer; padding: 6px; border-radius: 6px; flex-direction: column; gap: 4px; }
+.hamburger span { display: block; width: 20px; height: 2px; background: var(--gray-700); border-radius: 2px; transition: all 0.2s; }
+
+/* Sidebar overlay */
+#sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99; }
+#sidebar-overlay.open { display: block; }
+
+/* FAB — floating action button on mobile */
+.fab { display: none; position: fixed; bottom: 80px; right: 20px; width: 52px; height: 52px; border-radius: 50%; background: var(--red); color: #fff; border: none; font-size: 24px; cursor: pointer; z-index: 90; box-shadow: 0 4px 16px rgba(229,57,53,0.4); align-items: center; justify-content: center; }
+
+/* Bottom nav */
+#bottom-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; height: 64px; background: #fff; border-top: 1px solid var(--gray-200); z-index: 88; }
+.bottom-nav-inner { display: flex; height: 100%; }
+.bnav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; cursor: pointer; color: var(--gray-400); font-size: 10px; font-weight: 600; border: none; background: none; padding: 0; transition: color 0.15s; }
+.bnav-item.active { color: var(--red); }
+.bnav-item .bnav-icon { font-size: 20px; line-height: 1; }
+.bnav-badge { position: relative; }
+.bnav-badge::after { content: attr(data-badge); position: absolute; top: -4px; right: -8px; background: var(--red); color: #fff; font-size: 9px; padding: 0 4px; border-radius: 8px; font-weight: 700; display: none; }
+.bnav-badge[data-badge]::after { display: block; }
+
+@media (max-width: 768px) {
+  /* ── Layout ── */
+  #app { flex-direction: column; }
+  #content { padding: 12px; padding-bottom: 80px; }
+
+  /* ── Sidebar → drawer ── */
+  #sidebar {
+    position: fixed; top: 0; left: 0; bottom: 0;
+    width: 280px; z-index: 100;
+    transform: translateX(-100%);
+    transition: transform 0.25s cubic-bezier(0.4,0,0.2,1);
+  }
+  #sidebar.open { transform: translateX(0); }
+
+  /* ── Topbar ── */
+  #topbar { padding: 0 12px; gap: 8px; }
+  .hamburger { display: flex; }
+  .tenant-switcher { display: none; }
+  #topbar .btn-primary { display: none; } /* replaced by FAB */
+  .topbar-title { font-size: 15px; }
+
+  /* ── FAB ── */
+  .fab { display: flex; }
+
+  /* ── Bottom nav ── */
+  #bottom-nav { display: block; }
+
+  /* ── Stats grid → 2×2 ── */
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .stat-card { padding: 12px 14px; }
+  .stat-value { font-size: 22px; }
+
+  /* ── Intervention list → cards ── */
+  .list-header { display: none; }
+  .int-row {
+    display: flex; flex-direction: column; gap: 8px;
+    padding: 14px 16px; border-radius: 0;
+  }
+  .int-row > div { grid-column: unset; }
+  .int-id { font-size: 10px; }
+  .int-client { font-size: 14px; }
+
+  /* ── Detail → single col ── */
+  .detail-grid { grid-template-columns: 1fr; }
+  .field-grid { grid-template-columns: 1fr; gap: 10px; }
+  .two-col { grid-template-columns: 1fr; }
+
+  /* ── Module grid → single col ── */
+  .module-grid { grid-template-columns: 1fr; }
+
+  /* ── Platform grid → 1 col ── */
+  .platform-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .tenant-row { grid-template-columns: 36px 1fr 80px; gap: 10px; }
+  .tenant-row > div:nth-child(4),
+  .tenant-row > div:nth-child(5) { display: none; }
+
+  /* ── Cards ── */
+  .card-header { padding: 12px 14px; flex-wrap: wrap; gap: 8px; }
+  .card-body { padding: 14px; }
+  .card-title { font-size: 14px; }
+
+  /* ── Modal → full screen on mobile ── */
+  .modal-overlay { align-items: flex-end; }
+  .modal {
+    width: 100% !important; max-width: 100%;
+    border-radius: 16px 16px 0 0;
+    max-height: 92vh;
+  }
+
+  /* ── Parts table scroll ── */
+  .parts-table { font-size: 11px; }
+  .parts-table th, .parts-table td { padding: 6px; }
+
+  /* ── Invoice ── */
+  .invoice-header { flex-direction: column; gap: 12px; }
+  .invoice-table th, .invoice-table td { padding: 8px; font-size: 12px; }
+
+  /* ── Admin matrix → scroll ── */
+  #admin-matrix-body td, #admin-matrix-body th { padding: 6px 8px; font-size: 11px; }
+
+  /* ── Report form ── */
+  .report-section-title { font-size: 11px; }
+
+  /* ── Tech grid ── */
+  .tech-grid { grid-template-columns: 1fr; }
+
+  /* ── Login screen ── */
+  .login-box { width: 100%; padding: 20px; }
+  .login-card { padding: 24px 20px; }
+}
+
+@media (max-width: 480px) {
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .stat-value { font-size: 20px; }
+  .platform-grid { grid-template-columns: 1fr; }
+  #content { padding: 10px; padding-bottom: 80px; }
+  .topbar-title { font-size: 14px; }
+}
+
 /* ── Login Screen ── */
 #login-screen { position: fixed; inset: 0; background: #0f0f1a; z-index: 9999; display: flex; align-items: center; justify-content: center; }
 #login-screen.hidden { display: none; }
@@ -306,6 +430,30 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
   </div>
 </div>
 
+<!-- Sidebar overlay (mobile) -->
+<div id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<!-- FAB -->
+<button class="fab" onclick="openModal('modal-new-int')" title="Nouvelle intervention">＋</button>
+
+<!-- Bottom Nav -->
+<div id="bottom-nav">
+  <div class="bottom-nav-inner">
+    <button class="bnav-item active" id="bnav-dashboard" onclick="navTo('dashboard');setBnav('dashboard')">
+      <span class="bnav-icon">📊</span>Dashboard
+    </button>
+    <button class="bnav-item bnav-badge" id="bnav-interventions" data-badge="3" onclick="navTo('dashboard');setBnav('dashboard')">
+      <span class="bnav-icon">📋</span>Interventions
+    </button>
+    <button class="bnav-item" id="bnav-tech" onclick="navTo('technicians');setBnav('tech')">
+      <span class="bnav-icon">👷</span>Équipe
+    </button>
+    <button class="bnav-item" id="bnav-more" onclick="openSidebar()">
+      <span class="bnav-icon">☰</span>Menu
+    </button>
+  </div>
+</div>
+
 <div id="app">
   <!-- SIDEBAR -->
   <div id="sidebar">
@@ -337,6 +485,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
   <!-- MAIN -->
   <div id="main">
     <div id="topbar">
+      <button class="hamburger" onclick="openSidebar()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
       <div class="topbar-title" id="topbar-title">Dashboard</div>
       <div class="tenant-switcher">
         <span>🏢</span>
@@ -891,6 +1042,7 @@ function tenantEmoji(tid) {
 // NAVIGATION
 // ═══════════════════════════════════════════════════════════
 function navTo(page, intId) {
+  closeSidebar();
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
   currentPage = page;
@@ -918,6 +1070,13 @@ function navTo(page, intId) {
 function renderSidebar() {
   const t = TENANTS[currentTenant];
   const m = t.modules;
+  // update bottom nav badge
+  const badge = getActiveBadge();
+  const bnavInt = document.getElementById('bnav-interventions');
+  if (bnavInt) {
+    if (badge) { bnavInt.setAttribute('data-badge', badge); bnavInt.style.setProperty('--show-badge','block'); }
+    else bnavInt.removeAttribute('data-badge');
+  }
   const nav = document.getElementById('sidebar-nav');
   const items = [
     { id: 'nav-dashboard', icon: '📊', label: 'Dashboard',      page: 'dashboard',    on: true, badge: getActiveBadge() },
@@ -1955,6 +2114,31 @@ function createTenant() {
   // Rafraîchir la liste dans le panel admin sans fermer la modal
   toast(`Tenant "${name}" créé — ${Object.values(modules).filter(Boolean).length} modules`, 'success');
 }
+
+// ═══════════════════════════════════════════════════════════
+// MOBILE — sidebar drawer + bottom nav
+// ═══════════════════════════════════════════════════════════
+
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebar-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function setBnav(key) {
+  document.querySelectorAll('.bnav-item').forEach(b => b.classList.remove('active'));
+  const el = document.getElementById('bnav-' + key);
+  if (el) el.classList.add('active');
+}
+
+// Close sidebar on nav click (mobile)
+const _origNavTo = navTo;
 
 // ── Boot ──
 // Show login screen on load — don't call init() yet
