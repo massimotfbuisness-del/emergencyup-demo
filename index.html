@@ -443,7 +443,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
         <div class="card" style="margin-bottom:24px">
           <div class="card-header">
             <div class="card-title">Tous les tenants</div>
-            <button class="btn btn-primary btn-sm" onclick="toast('Création tenant — à connecter à Supabase','info')">+ Nouveau tenant</button>
+            <button class="btn btn-primary btn-sm" onclick="openNewTenantModal()">+ Nouveau client</button>
           </div>
           <div style="padding:4px 0">
             <div style="display:grid;grid-template-columns:40px 1fr 100px 120px 100px 120px;gap:14px;padding:10px 20px;font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--gray-100)">
@@ -504,6 +504,97 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 
 <!-- TOAST CONTAINER -->
 <div class="toast-container" id="toast-container"></div>
+
+<!-- MODAL: NOUVEAU TENANT -->
+<div class="modal-overlay" id="modal-new-tenant">
+  <div class="modal" style="width:600px">
+    <div class="modal-header">
+      <div class="modal-title">🏢 Nouveau client / tenant</div>
+      <button class="modal-close" onclick="closeModal('modal-new-tenant')">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <div style="background:#f0f4ff;border:1px solid #c5d0f0;border-radius:8px;padding:12px 14px;font-size:12px;color:#3949ab;margin-bottom:20px">
+        ℹ️ Le compte est créé en mémoire pour cette démo. En production : Supabase Auth + INSERT companies + JWT claim.
+      </div>
+
+      <!-- Infos entreprise -->
+      <div style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;border-bottom:1px solid var(--gray-100);padding-bottom:6px">Entreprise</div>
+      <div class="two-col" style="margin-bottom:12px">
+        <div class="form-row">
+          <label class="form-label">Nom de l'entreprise *</label>
+          <input type="text" class="text-input" id="nt-name" placeholder="ex: BTP Renault Sàrl" />
+        </div>
+        <div class="form-row">
+          <label class="form-label">Slug URL *</label>
+          <input type="text" class="text-input" id="nt-slug" placeholder="ex: btp-renault" oninput="this.value=this.value.toLowerCase().replace(/[^a-z0-9-]/g,'-')" />
+        </div>
+      </div>
+      <div class="two-col" style="margin-bottom:20px">
+        <div class="form-row">
+          <label class="form-label">Plan</label>
+          <select class="select-input" id="nt-plan">
+            <option value="starter">Starter</option>
+            <option value="pro" selected>Pro</option>
+            <option value="enterprise">Enterprise</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label class="form-label">Secteur</label>
+          <select class="select-input" id="nt-sector">
+            <option value="plumbing">🔧 Plomberie / Chauffage</option>
+            <option value="electrical">⚡ Électricité</option>
+            <option value="locksmith">🔑 Serrurerie</option>
+            <option value="btp">🏗️ BTP / Maintenance</option>
+            <option value="multiservice">📦 Multiservices</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Compte admin -->
+      <div style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;border-bottom:1px solid var(--gray-100);padding-bottom:6px">Compte administrateur</div>
+      <div class="two-col" style="margin-bottom:12px">
+        <div class="form-row">
+          <label class="form-label">Email *</label>
+          <input type="email" class="text-input" id="nt-email" placeholder="admin@client.com" />
+        </div>
+        <div class="form-row">
+          <label class="form-label">Nom complet</label>
+          <input type="text" class="text-input" id="nt-fullname" placeholder="Prénom Nom" />
+        </div>
+      </div>
+      <div class="two-col" style="margin-bottom:20px">
+        <div class="form-row">
+          <label class="form-label">Mot de passe *</label>
+          <input type="text" class="text-input" id="nt-password" placeholder="Minimum 8 caractères" />
+        </div>
+        <div class="form-row" style="display:flex;align-items:flex-end">
+          <button class="btn btn-ghost btn-sm" onclick="generatePassword()">🎲 Générer</button>
+        </div>
+      </div>
+
+      <!-- Modules -->
+      <div style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;border-bottom:1px solid var(--gray-100);padding-bottom:6px">Modules activés</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px" id="nt-modules-grid">
+        <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--gray-200);border-radius:6px;cursor:pointer;font-size:13px"><input type="checkbox" id="ntm-dispatch" checked> ⚡ Dispatch</label>
+        <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--gray-200);border-radius:6px;cursor:pointer;font-size:13px"><input type="checkbox" id="ntm-report" checked> 📝 Rapports</label>
+        <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--gray-200);border-radius:6px;cursor:pointer;font-size:13px"><input type="checkbox" id="ntm-invoice" checked> 💶 Facturation</label>
+        <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--gray-200);border-radius:6px;cursor:pointer;font-size:13px"><input type="checkbox" id="ntm-phone"> 📞 Téléphone / Intake</label>
+        <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--gray-200);border-radius:6px;cursor:pointer;font-size:13px"><input type="checkbox" id="ntm-signatures"> ✍️ Signatures</label>
+        <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--gray-200);border-radius:6px;cursor:pointer;font-size:13px"><input type="checkbox" id="ntm-notifications"> 🔔 Notifications</label>
+        <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--gray-200);border-radius:6px;cursor:pointer;font-size:13px"><input type="checkbox" id="ntm-whatsapp"> 💬 WhatsApp</label>
+        <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--gray-200);border-radius:6px;cursor:pointer;font-size:13px"><input type="checkbox" id="ntm-portal"> 🌐 Portail client</label>
+        <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--gray-200);border-radius:6px;cursor:pointer;font-size:13px"><input type="checkbox" id="ntm-analytics"> 📈 Analytics</label>
+        <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--gray-200);border-radius:6px;cursor:pointer;font-size:13px"><input type="checkbox" id="ntm-whitelabel"> 🎨 White-label</label>
+      </div>
+      <div id="nt-result" style="display:none"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-new-tenant')">Annuler</button>
+      <button class="btn btn-primary" onclick="createTenant()">✅ Créer le compte client</button>
+    </div>
+  </div>
+</div>
 
 <!-- MODAL: NOUVELLE INTERVENTION -->
 <div class="modal-overlay" id="modal-new-int">
@@ -1744,6 +1835,116 @@ function renderAdminPanel() {
       ${tenantKeys.map(k => cell(TENANTS[k].modules[m.key])).join('')}
     </tr>
   `).join('');
+}
+
+// ═══════════════════════════════════════════════════════════
+// CREATE TENANT
+// ═══════════════════════════════════════════════════════════
+
+function openNewTenantModal() {
+  // reset form
+  ['nt-name','nt-slug','nt-email','nt-fullname','nt-password'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.value = '';
+  });
+  document.getElementById('nt-result').style.display = 'none';
+  generatePassword();
+  openModal('modal-new-tenant');
+}
+
+function generatePassword() {
+  const chars = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789!@#';
+  let pwd = '';
+  for (let i = 0; i < 12; i++) pwd += chars[Math.floor(Math.random() * chars.length)];
+  document.getElementById('nt-password').value = pwd;
+}
+
+function createTenant() {
+  const name     = document.getElementById('nt-name').value.trim();
+  const slug     = document.getElementById('nt-slug').value.trim();
+  const plan     = document.getElementById('nt-plan').value;
+  const email    = document.getElementById('nt-email').value.trim();
+  const fullname = document.getElementById('nt-fullname').value.trim() || 'Admin';
+  const password = document.getElementById('nt-password').value.trim();
+
+  // Validation
+  if (!name)     { toast('Le nom de l\'entreprise est requis', 'error'); return; }
+  if (!slug)     { toast('Le slug est requis', 'error'); return; }
+  if (!email)    { toast('L\'email est requis', 'error'); return; }
+  if (!password || password.length < 6) { toast('Mot de passe trop court (min 6 chars)', 'error'); return; }
+  if (TENANTS[slug]) { toast('Ce slug est déjà utilisé', 'error'); return; }
+
+  // Modules
+  const modules = {
+    phone_intake:  document.getElementById('ntm-phone').checked,
+    whatsapp:      document.getElementById('ntm-whatsapp').checked,
+    dispatch:      document.getElementById('ntm-dispatch').checked,
+    report:        document.getElementById('ntm-report').checked,
+    invoice:       document.getElementById('ntm-invoice').checked,
+    quotes:        false,
+    signatures:    document.getElementById('ntm-signatures').checked,
+    attachments:   false,
+    contracts:     false,
+    client_portal: document.getElementById('ntm-portal').checked,
+    notifications: document.getElementById('ntm-notifications').checked,
+    sla:           false,
+    analytics:     document.getElementById('ntm-analytics').checked,
+    white_label:   document.getElementById('ntm-whitelabel').checked,
+  };
+
+  // Initiales
+  const parts = fullname.trim().split(' ');
+  const initials = (parts[0][0] + (parts[1]?.[0] || '')).toUpperCase();
+
+  // Créer le tenant
+  TENANTS[slug] = {
+    id: 'tenant-' + Date.now(),
+    name,
+    slug,
+    plan,
+    timezone: 'Europe/Paris',
+    modules,
+    user: { name: fullname, role: 'owner', initials }
+  };
+
+  // Créer le compte
+  ACCOUNTS.push({
+    email: email.toLowerCase(),
+    password,
+    role: 'owner',
+    name: fullname,
+    initials,
+    tenant: slug
+  });
+
+  // Mettre à jour le select tenant dans la topbar
+  const sel = document.getElementById('tenant-select');
+  const opt = document.createElement('option');
+  opt.value = slug;
+  opt.textContent = `${name} — ${Object.values(modules).filter(Boolean).length} modules`;
+  sel.appendChild(opt);
+
+  // Afficher le résumé dans la modal
+  const modOn = Object.entries(modules).filter(([,v])=>v).map(([k])=>k).join(', ');
+  document.getElementById('nt-result').style.display = 'block';
+  document.getElementById('nt-result').innerHTML = `
+    <div style="background:var(--green-light);border:1px solid #a5d6a7;border-radius:8px;padding:16px;margin-top:8px">
+      <div style="font-weight:700;color:var(--green);margin-bottom:12px;font-size:14px">✅ Compte créé avec succès !</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px">
+        <div><span style="color:var(--gray-500)">Entreprise</span><br><strong>${name}</strong></div>
+        <div><span style="color:var(--gray-500)">Plan</span><br><strong>${plan.toUpperCase()}</strong></div>
+        <div><span style="color:var(--gray-500)">Email</span><br><strong>${email}</strong></div>
+        <div><span style="color:var(--gray-500)">Mot de passe</span><br><strong style="font-family:monospace">${password}</strong></div>
+        <div style="grid-column:1/-1"><span style="color:var(--gray-500)">Modules actifs</span><br><strong>${modOn || 'aucun'}</strong></div>
+      </div>
+      <div style="margin-top:12px;display:flex;gap:8px">
+        <button class="btn btn-success btn-sm" onclick="closeModal('modal-new-tenant');enterTenant('${slug}')">→ Entrer dans ce tenant</button>
+        <button class="btn btn-ghost btn-sm" onclick="closeModal('modal-new-tenant');renderAdminPanel()">← Retour admin</button>
+      </div>
+    </div>
+  `;
+
+  // Rafraîchir la liste dans le panel admin sans fermer la modal
+  toast(`Tenant "${name}" créé — ${Object.values(modules).filter(Boolean).length} modules`, 'success');
 }
 
 // ── Boot ──
