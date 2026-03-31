@@ -1346,7 +1346,10 @@ function navTo(page, intId) {
   if (page === 'report') renderReport(currentIntId);
   if (page === 'invoice') renderInvoice(currentIntId);
   if (page === 'technicians') renderTechnicians();
-  if (page === 'modules') { switchSettingsTab(currentSettingsTab || 'entreprise'); renderModules(); }
+  if (page === 'modules') {
+    if (currentUser?.role !== 'platform_admin') { toast('Accès réservé au super admin', 'error'); navTo('dashboard'); return; }
+    switchSettingsTab(currentSettingsTab || 'entreprise'); renderModules();
+  }
   if (page === 'admin') { renderAdminPanel(); }
   window.scrollTo(0,0);
 }
@@ -1365,6 +1368,7 @@ function renderSidebar() {
     else bnavInt.removeAttribute('data-badge');
   }
   const nav = document.getElementById('sidebar-nav');
+  const isSuperAdmin = currentUser?.role === 'platform_admin';
   const items = [
     { id: 'nav-dashboard', icon: '📊', label: 'Dashboard',      page: 'dashboard',    on: true, badge: getActiveBadge() },
     { id: 'nav-intake',    icon: '📞', label: 'Intake appel',   page: null,           on: m.phone_intake },
@@ -1372,7 +1376,7 @@ function renderSidebar() {
     { id: 'nav-report',    icon: '📝', label: 'Rapports',       page: null,           on: m.report },
     { id: 'nav-invoice2',  icon: '💶', label: 'Facturation',    page: null,           on: m.invoice },
     { id: 'nav-tech',      icon: '👷', label: 'Techniciens',    page: 'technicians',  on: true },
-    { id: 'nav-modules',   icon: '⚙️', label: 'Paramètres',     page: 'modules',      on: true },
+    ...(isSuperAdmin ? [{ id: 'nav-modules', icon: '⚙️', label: 'Paramètres', page: 'modules', on: true }] : []),
   ];
   let html = '<div class="nav-section">Core</div>';
   items.forEach(item => {
@@ -2199,7 +2203,8 @@ function enterTenant(tid) {
     <div class="nav-item active" id="nav-dashboard" onclick="navTo('dashboard')"><span class="icon">📊</span>Dashboard<span class="nav-badge">${getActiveBadge()}</span></div>
     <div class="nav-item" id="nav-tech" onclick="navTo('technicians')"><span class="icon">👷</span>Techniciens</div>
     <div class="nav-item" id="nav-modules" onclick="navTo('modules')"><span class="icon">⚙️</span>Paramètres</div>
-    <div class="nav-section">Compte</div>
+    <div class="nav-section" style="margin-top:8px">Super Admin</div>
+    <div class="nav-item" onclick="bootAsAdmin()"><span class="icon">🏛️</span>Retour platform</div>
     <div class="nav-item" onclick="logout()"><span class="icon">🚪</span>Déconnexion</div>
   `;
   topbar.innerHTML = `<span class="admin-badge" style="background:var(--blue)">TENANT</span> <span style="margin-left:8px">${t.name}</span>`;
