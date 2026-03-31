@@ -665,8 +665,8 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
 
         <!-- Platform Stats -->
         <div class="platform-grid" style="margin-bottom:24px">
-          <div class="stat-card blue"><div class="stat-card-inner"><div><div class="stat-label">Tenants actifs</div><div class="stat-value">3</div><div class="stat-sub">sur la plateforme</div></div><div class="stat-icon">🏢</div></div></div>
-          <div class="stat-card green"><div class="stat-card-inner"><div><div class="stat-label">Interventions totales</div><div class="stat-value">5</div><div class="stat-sub">toutes companies</div></div><div class="stat-icon">📋</div></div></div>
+          <div class="stat-card blue"><div class="stat-card-inner"><div><div class="stat-label">Tenants actifs</div><div class="stat-value">4</div><div class="stat-sub">sur la plateforme</div></div><div class="stat-icon">🏢</div></div></div>
+          <div class="stat-card green"><div class="stat-card-inner"><div><div class="stat-label">Interventions totales</div><div class="stat-value">7</div><div class="stat-sub">toutes companies</div></div><div class="stat-icon">📋</div></div></div>
           <div class="stat-card orange"><div class="stat-card-inner"><div><div class="stat-label">Techniciens</div><div class="stat-value">4</div><div class="stat-sub">profils actifs</div></div><div class="stat-icon">👷</div></div></div>
         </div>
 
@@ -1210,6 +1210,30 @@ const TENANTS = {
       white_label: false
     },
     user: { name: 'Claire Artisan', role: 'owner', initials: 'CA' }
+  },
+  demo: {
+    id: 'd4e5f6a7-0000-0000-0000-000000000099',
+    name: 'Demo Company SA',
+    slug: 'demo-company',
+    plan: 'pro',
+    timezone: 'Europe/Zurich',
+    modules: {
+      phone_intake: true,
+      whatsapp: true,
+      dispatch: true,
+      report: true,
+      invoice: true,
+      quotes: true,
+      signatures: true,
+      attachments: true,
+      contracts: false,
+      client_portal: false,
+      notifications: true,
+      sla: false,
+      analytics: false,
+      white_label: false
+    },
+    user: { name: 'Demo User', role: 'owner', initials: 'DU' }
   }
 };
 
@@ -2148,6 +2172,14 @@ const ACCOUNTS = [
     name: 'Sophie Reymond',
     initials: 'SR',
     tenant: 'plomb'
+  },
+  {
+    email: 'demo@emergencyup.io',
+    password: 'demo2026',
+    role: 'owner',
+    name: 'Demo User',
+    initials: 'DU',
+    tenant: 'demo'
   }
 ];
 
@@ -2262,7 +2294,7 @@ function renderAdminPanel() {
   if (!tenantList) return;
 
   const plans = { starter:'plan-starter', pro:'plan-pro', enterprise:'plan-enterprise' };
-  const tenantIntCount = { plomb: 5, fixitpro: 0, artisandoc: 0 };
+  const tenantIntCount = { plomb: 5, fixitpro: 0, artisandoc: 0, demo: 2 };
   const tenantEmojis = { plomb:'🔧', fixitpro:'⚡', artisandoc:'📝', ...Object.fromEntries(Object.keys(TENANTS).filter(k=>!['plomb','fixitpro','artisandoc'].includes(k)).map(k=>[k,'🏢'])) };
 
   tenantList.innerHTML = Object.entries(TENANTS).map(([key, t]) => {
@@ -2313,7 +2345,7 @@ function renderAdminPanel() {
     { key:'white_label',  label:'🎨 White-label' },
   ];
 
-  const tenantKeys = ['plomb','fixitpro','artisandoc'];
+  const tenantKeys = ['plomb','fixitpro','artisandoc','demo'];
   const cell = v => v
     ? `<td style="text-align:center;padding:8px"><span style="color:var(--green);font-size:16px">✓</span></td>`
     : `<td style="text-align:center;padding:8px"><span style="color:var(--gray-300);font-size:14px">—</span></td>`;
