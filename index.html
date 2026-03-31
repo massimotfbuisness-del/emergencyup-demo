@@ -2140,13 +2140,13 @@ function doLogin() {
   }
 
   currentUser = account;
+  localStorage.setItem('eu_session', JSON.stringify({ email: account.email, password: account.password }));
   document.getElementById('login-screen').classList.add('hidden');
 
   if (account.role === 'platform_admin') {
     bootAsAdmin();
   } else {
     switchTenant(account.tenant || 'plomb');
-    // update user display
     document.getElementById('user-avatar').textContent = account.initials;
     document.getElementById('user-name').textContent = account.name;
     document.getElementById('user-role').textContent = account.role;
@@ -2214,6 +2214,7 @@ function enterTenant(tid) {
 
 function logout() {
   currentUser = null;
+  localStorage.removeItem('eu_session');
   document.getElementById('login-screen').classList.remove('hidden');
   document.getElementById('login-email').value = '';
   document.getElementById('login-password').value = '';
@@ -2511,11 +2512,29 @@ function setBnav(key) {
 const _origNavTo = navTo;
 
 // ── Boot ──
-// Show login screen on load — don't call init() yet
+// Restaure la session depuis localStorage si elle existe
 document.addEventListener('DOMContentLoaded', () => {
-  // pre-fill for demo convenience
-  document.getElementById('login-email').value = '';
-  document.getElementById('login-password').value = '';
+  const saved = localStorage.getItem('eu_session');
+  if (saved) {
+    try {
+      const { email, password } = JSON.parse(saved);
+      const account = ACCOUNTS.find(a => a.email.toLowerCase() === email && a.password === password);
+      if (account) {
+        currentUser = account;
+        document.getElementById('login-screen').classList.add('hidden');
+        if (account.role === 'platform_admin') {
+          bootAsAdmin();
+        } else {
+          switchTenant(account.tenant || 'plomb');
+          document.getElementById('user-avatar').textContent = account.initials;
+          document.getElementById('user-name').textContent = account.name;
+          document.getElementById('user-role').textContent = account.role;
+        }
+        return;
+      }
+    } catch(e) { localStorage.removeItem('eu_session'); }
+  }
+  // Pas de session — login screen déjà visible
 });
 </script>
 </body>
