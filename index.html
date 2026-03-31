@@ -239,6 +239,50 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .mock-label { font-size: 10px; background: #fff3e0; color: #e65100; padding: 1px 6px; border-radius: 4px; font-weight: 600; vertical-align: middle; margin-left: 4px; }
 
 /* ══════════════════════════════════════
+   SETTINGS PAGE — style KitchenUp
+══════════════════════════════════════ */
+.settings-header { background: #fff; border-bottom: 1px solid var(--gray-200); margin: -24px -24px 0; padding: 0 24px; position: sticky; top: 0; z-index: 10; }
+.settings-header-inner { max-width: 860px; }
+.settings-title { font-size: 18px; font-weight: 800; padding-top: 20px; margin-bottom: 16px; }
+.settings-tabs { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; padding-bottom: 0; }
+.settings-tabs::-webkit-scrollbar { display: none; }
+.stab { background: none; border: none; border-bottom: 2px solid transparent; padding: 10px 14px; font-size: 13px; font-weight: 500; color: var(--gray-500); cursor: pointer; white-space: nowrap; transition: all 0.15s; font-family: inherit; }
+.stab:hover { color: var(--gray-800); border-bottom-color: var(--gray-300); }
+.stab.active { color: var(--gray-900); border-bottom-color: var(--gray-900); font-weight: 600; }
+.settings-body { max-width: 860px; padding-top: 28px; }
+.stab-content { display: none; }
+.stab-content.active { display: block; }
+.settings-section { margin-bottom: 24px; }
+.settings-section-title { font-size: 13px; font-weight: 700; color: var(--gray-700); margin-bottom: 14px; }
+.settings-divider { height: 1px; background: var(--gray-100); margin: 24px 0; }
+.settings-form { display: flex; flex-direction: column; gap: 14px; }
+.sform-row { display: flex; flex-direction: column; gap: 5px; }
+.sform-label { font-size: 12px; font-weight: 600; color: var(--gray-600); }
+.settings-save-row { display: flex; justify-content: flex-end; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--gray-100); }
+
+/* Staff list */
+.staff-list { display: flex; flex-direction: column; gap: 8px; }
+.staff-row { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: var(--gray-50); border-radius: 8px; border: 1px solid var(--gray-200); }
+.staff-info { flex: 1; min-width: 0; }
+.staff-name { font-weight: 600; font-size: 13px; }
+.staff-email { font-size: 11px; color: var(--gray-500); }
+
+/* Zone cards */
+.zone-card { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: var(--gray-50); border-radius: 8px; border: 1px solid var(--gray-200); }
+.zone-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+.zone-info { flex: 1; }
+.zone-name { font-weight: 600; font-size: 13px; }
+.zone-cp { font-size: 11px; color: var(--gray-500); margin-top: 2px; }
+
+/* Integration cards */
+.integration-card { display: flex; align-items: flex-start; gap: 14px; padding: 14px 16px; background: #fff; border: 1px solid var(--gray-200); border-radius: 10px; }
+.integration-card.integration-coming-soon { border-style: dashed; }
+.integration-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.integration-info { flex: 1; min-width: 0; }
+.integration-name { font-weight: 600; font-size: 13px; margin-bottom: 3px; }
+.integration-desc { font-size: 12px; color: var(--gray-500); line-height: 1.5; }
+
+/* ══════════════════════════════════════
    MOBILE RESPONSIVE
 ══════════════════════════════════════ */
 
@@ -342,6 +386,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 
   /* ── Admin matrix → scroll ── */
   #admin-matrix-body td, #admin-matrix-body th { padding: 6px 8px; font-size: 11px; }
+
+  /* ── Settings ── */
+  .settings-header { margin: -12px -12px 0; padding: 0 12px; }
+  .settings-title { font-size: 16px; padding-top: 14px; margin-bottom: 10px; }
+  .stab { padding: 8px 10px; font-size: 12px; }
+  .settings-body { padding-top: 16px; }
+  .integration-card { flex-wrap: wrap; gap: 10px; }
+  .staff-row { flex-wrap: wrap; }
+  .sform-row.two-col { grid-template-columns: 1fr; }
 
   /* ── Report form ── */
   .report-section-title { font-size: 11px; }
@@ -622,29 +675,263 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
         </div>
       </div>
 
-      <!-- PAGE: MODULES / SETTINGS -->
+      <!-- PAGE: PARAMÈTRES -->
       <div class="page" id="page-modules">
-        <div style="margin-bottom:20px">
-          <h2 style="font-size:18px;font-weight:700;margin-bottom:4px">Configuration modules</h2>
-          <p style="color:var(--gray-500);font-size:13px">Activer ou désactiver les modules pour ce tenant</p>
+        <!-- Settings header + tabs (style KitchenUp) -->
+        <div class="settings-header">
+          <div class="settings-header-inner">
+            <h1 class="settings-title">Paramètres</h1>
+            <nav class="settings-tabs" id="settings-tabs">
+              <button class="stab active" data-tab="entreprise" onclick="switchSettingsTab('entreprise')">🏢 Entreprise</button>
+              <button class="stab" data-tab="equipe" onclick="switchSettingsTab('equipe')">👥 Équipe</button>
+              <button class="stab" data-tab="zones" onclick="switchSettingsTab('zones')">📍 Zones</button>
+              <button class="stab" data-tab="tarifs" onclick="switchSettingsTab('tarifs')">💶 Tarification</button>
+              <button class="stab" data-tab="modules-tab" onclick="switchSettingsTab('modules-tab')">🔧 Modules</button>
+              <button class="stab" data-tab="integrations" onclick="switchSettingsTab('integrations')">🔗 Intégrations</button>
+              <button class="stab" data-tab="compte" onclick="switchSettingsTab('compte')">👤 Compte</button>
+            </nav>
+          </div>
         </div>
-        <div class="two-col">
-          <div>
-            <div class="card">
-              <div class="card-header"><div class="card-title">Modules Core <span class="module-core-tag">obligatoires</span></div></div>
-              <div class="card-body">
-                <div class="module-grid" id="modules-core"></div>
+
+        <!-- Tab content -->
+        <div class="settings-body">
+
+          <!-- ═══ ENTREPRISE ═══ -->
+          <div class="stab-content active" id="stab-entreprise">
+            <div class="settings-section">
+              <div class="settings-section-title">Informations entreprise</div>
+              <div class="settings-form">
+                <div class="sform-row"><label class="sform-label">Nom de l'entreprise</label><input class="text-input" value="PlombExpress Sàrl" /></div>
+                <div class="sform-row two-col"><div><label class="sform-label">Email</label><input class="text-input" value="contact@plombexpress.ch" /></div><div><label class="sform-label">Téléphone</label><input class="text-input" value="+41 21 612 34 56" /></div></div>
+                <div class="sform-row"><label class="sform-label">Adresse</label><input class="text-input" value="Rue du Grand-Pont 8, 1003 Lausanne" /></div>
+                <div class="sform-row two-col"><div><label class="sform-label">IDE / CHE</label><input class="text-input" value="CHE-123.456.789" /></div><div><label class="sform-label">N° TVA</label><input class="text-input" value="CHE-123.456.789 MWST" /></div></div>
+              </div>
+            </div>
+            <div class="settings-divider"></div>
+            <div class="settings-section">
+              <div class="settings-section-title">Coordonnées bancaires</div>
+              <div class="settings-form">
+                <div class="sform-row"><label class="sform-label">IBAN</label><input class="text-input" value="CH56 0483 5012 3456 7800 9" /></div>
+                <div class="sform-row two-col"><div><label class="sform-label">Banque</label><input class="text-input" value="Banque Cantonale Vaudoise" /></div><div><label class="sform-label">BIC/SWIFT</label><input class="text-input" value="BCVLCH2L" /></div></div>
+              </div>
+            </div>
+            <div class="settings-divider"></div>
+            <div class="settings-section">
+              <div class="settings-section-title">Branding</div>
+              <div class="settings-form">
+                <div class="sform-row">
+                  <label class="sform-label">Couleur principale</label>
+                  <div style="display:flex;align-items:center;gap:10px">
+                    <input type="color" value="#e53935" style="width:40px;height:36px;border:1px solid var(--gray-300);border-radius:6px;cursor:pointer;padding:2px" id="brand-color" onchange="updateBrandColor(this.value)" />
+                    <input class="text-input" style="width:120px" value="#e53935" id="brand-color-hex" />
+                  </div>
+                </div>
+                <div class="sform-row"><label class="sform-label">URL Logo <span style="color:var(--gray-400);font-weight:400">(optionnel)</span></label><input class="text-input" placeholder="https://..." /></div>
+              </div>
+            </div>
+            <div class="settings-save-row"><button class="btn btn-primary" onclick="toast('Paramètres entreprise sauvegardés','success')">Sauvegarder</button></div>
+          </div>
+
+          <!-- ═══ ÉQUIPE ═══ -->
+          <div class="stab-content" id="stab-equipe">
+            <div class="settings-section">
+              <div class="settings-section-title" style="display:flex;justify-content:space-between;align-items:center">
+                Utilisateurs <button class="btn btn-ghost btn-sm" onclick="toast('Invitation envoyée (mock)','success')">+ Inviter</button>
+              </div>
+              <div class="staff-list">
+                <div class="staff-row"><div class="user-avatar" style="background:#1565c0">MC</div><div class="staff-info"><div class="staff-name">Marc Chevalley</div><div class="staff-email">owner@plombexpress.ch</div></div><span class="badge badge-assigned">owner</span><button class="btn btn-ghost btn-sm">Éditer</button></div>
+                <div class="staff-row"><div class="user-avatar" style="background:#6a1b9a">SR</div><div class="staff-info"><div class="staff-name">Sophie Reymond</div><div class="staff-email">dispatch@plombexpress.ch</div></div><span class="badge badge-standard">dispatcher</span><button class="btn btn-ghost btn-sm">Éditer</button></div>
+              </div>
+            </div>
+            <div class="settings-divider"></div>
+            <div class="settings-section">
+              <div class="settings-section-title" style="display:flex;justify-content:space-between;align-items:center">
+                Techniciens terrain <button class="btn btn-ghost btn-sm" onclick="toast('Ajout technicien (mock)','info')">+ Ajouter</button>
+              </div>
+              <div class="staff-list" id="settings-tech-list"></div>
+            </div>
+          </div>
+
+          <!-- ═══ ZONES ═══ -->
+          <div class="stab-content" id="stab-zones">
+            <div class="settings-section">
+              <div class="settings-section-title" style="display:flex;justify-content:space-between;align-items:center">
+                Zones de couverture <button class="btn btn-ghost btn-sm" onclick="toast('Nouvelle zone (mock)','info')">+ Zone</button>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
+                <div class="zone-card"><div class="zone-dot"></div><div class="zone-info"><div class="zone-name">Lausanne Centre</div><div class="zone-cp">1000 · 1001 · 1002 · 1003 · 1004 · 1005 · 1006 · 1007</div></div><button class="btn btn-ghost btn-sm">Éditer</button></div>
+                <div class="zone-card"><div class="zone-dot"></div><div class="zone-info"><div class="zone-name">Lausanne Ouest</div><div class="zone-cp">1008 · 1020 · 1022 · 1023 — Renens · Chavannes · Ecublens</div></div><button class="btn btn-ghost btn-sm">Éditer</button></div>
+                <div class="zone-card"><div class="zone-dot"></div><div class="zone-info"><div class="zone-name">Lausanne Nord</div><div class="zone-cp">1010 · 1012 · 1014 · 1015 — Epalinges · Romanel</div></div><button class="btn btn-ghost btn-sm">Éditer</button></div>
               </div>
             </div>
           </div>
-          <div>
-            <div class="card">
-              <div class="card-header"><div class="card-title">Modules optionnels</div></div>
-              <div class="card-body">
-                <div class="module-grid" id="modules-optional"></div>
+
+          <!-- ═══ TARIFICATION ═══ -->
+          <div class="stab-content" id="stab-tarifs">
+            <div class="settings-section">
+              <div class="settings-section-title">Main d'œuvre</div>
+              <div class="settings-form">
+                <div class="sform-row two-col"><div><label class="sform-label">Taux horaire (CHF)</label><input class="text-input" value="89.00" type="number" /></div><div><label class="sform-label">TVA applicable</label><select class="select-input"><option>8.1% (standard)</option><option>2.6% (réduit)</option><option>0% (exonéré)</option></select></div></div>
+                <div class="sform-row two-col"><div><label class="sform-label">Forfait déplacement (CHF)</label><input class="text-input" value="25.00" type="number" /></div><div><label class="sform-label">Urgence hors heures (+%)</label><input class="text-input" value="50" type="number" /></div></div>
+              </div>
+            </div>
+            <div class="settings-divider"></div>
+            <div class="settings-section">
+              <div class="settings-section-title">Conditions de paiement</div>
+              <div class="settings-form">
+                <div class="sform-row two-col"><div><label class="sform-label">Délai de paiement (jours)</label><input class="text-input" value="30" type="number" /></div><div><label class="sform-label">Devise</label><select class="select-input"><option>CHF</option><option>EUR</option></select></div></div>
+                <div class="sform-row"><label class="sform-label">Mentions facture</label><textarea class="textarea-input" style="min-height:60px">Veuillez indiquer la référence facture lors du paiement. Pénalités de retard : 5% après échéance.</textarea></div>
+              </div>
+            </div>
+            <div class="settings-save-row"><button class="btn btn-primary" onclick="toast('Tarification sauvegardée','success')">Sauvegarder</button></div>
+          </div>
+
+          <!-- ═══ MODULES ═══ -->
+          <div class="stab-content" id="stab-modules-tab">
+            <div class="settings-section">
+              <div class="settings-section-title">Modules Core <span class="module-core-tag">toujours actifs</span></div>
+              <div class="module-grid" id="modules-core"></div>
+            </div>
+            <div class="settings-divider"></div>
+            <div class="settings-section">
+              <div class="settings-section-title">Modules optionnels</div>
+              <div class="module-grid" id="modules-optional"></div>
+            </div>
+          </div>
+
+          <!-- ═══ INTÉGRATIONS ═══ -->
+          <div class="stab-content" id="stab-integrations">
+            <div class="settings-section">
+              <div class="settings-section-title">Canaux d'entrée</div>
+              <div style="display:flex;flex-direction:column;gap:10px">
+
+                <!-- Téléphone / Twilio -->
+                <div class="integration-card">
+                  <div class="integration-icon" style="background:#f0f4ff">📞</div>
+                  <div class="integration-info">
+                    <div class="integration-name">Téléphone — Twilio / VAPI / Retell</div>
+                    <div class="integration-desc">Appels entrants transformés automatiquement en interventions via webhook HMAC</div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+                    <span class="badge badge-standard" id="twilio-status-badge">Configuré</span>
+                    <button class="btn btn-ghost btn-sm" onclick="toggleIntegration('twilio')">Gérer</button>
+                  </div>
+                </div>
+
+                <!-- WhatsApp / GHL -->
+                <div class="integration-card integration-coming-soon">
+                  <div class="integration-icon" style="background:#e8f5e9">💬</div>
+                  <div class="integration-info">
+                    <div class="integration-name">WhatsApp 24/24 <span class="badge badge-qualified" style="font-size:10px;margin-left:6px">Bientôt · via GHL</span></div>
+                    <div class="integration-desc">Réception et traitement des messages WhatsApp en interventions — disponible dès que GoHighLevel est connecté. Réponse automatique 24h/24, 7j/7.</div>
+                    <div style="margin-top:8px;padding:8px 10px;background:#fff8e1;border-radius:6px;font-size:11px;color:#f57f17;display:flex;align-items:center;gap:6px">
+                      ⚡ Activez d'abord GoHighLevel ci-dessous pour débloquer ce canal
+                    </div>
+                  </div>
+                  <button class="btn btn-ghost btn-sm" style="opacity:0.4" onclick="toast('Nécessite GoHighLevel connecté','info')">Indisponible</button>
+                </div>
+
+                <!-- Manuel -->
+                <div class="integration-card">
+                  <div class="integration-icon" style="background:#fce4ec">📋</div>
+                  <div class="integration-info">
+                    <div class="integration-name">Création manuelle</div>
+                    <div class="integration-desc">Interventions créées directement par un dispatcher depuis le dashboard</div>
+                  </div>
+                  <span class="badge badge-standard">Actif</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-divider"></div>
+
+            <div class="settings-section">
+              <div class="settings-section-title">CRM & Automatisation</div>
+              <div style="display:flex;flex-direction:column;gap:10px">
+
+                <!-- GHL -->
+                <div class="integration-card">
+                  <div class="integration-icon" style="background:#f3e5f5">⚡</div>
+                  <div class="integration-info">
+                    <div class="integration-name">GoHighLevel (GHL)</div>
+                    <div class="integration-desc">Sync contacts, pipelines, automatisations CRM. Débloque WhatsApp 24/24, email automatique et relances factures</div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+                    <span class="badge badge-low" id="ghl-badge">Non connecté</span>
+                    <button class="btn btn-ghost btn-sm" onclick="connectGHL()">Connecter</button>
+                  </div>
+                </div>
+
+                <!-- Stripe -->
+                <div class="integration-card">
+                  <div class="integration-icon" style="background:#e8eaf6">💳</div>
+                  <div class="integration-info">
+                    <div class="integration-name">Stripe</div>
+                    <div class="integration-desc">Paiement en ligne — liens de paiement sur factures, webhook paiement reçu</div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+                    <span class="badge badge-low">Non connecté</span>
+                    <button class="btn btn-ghost btn-sm" onclick="toast('Stripe — à configurer en prod','info')">Connecter</button>
+                  </div>
+                </div>
+
+                <!-- Calendrier -->
+                <div class="integration-card">
+                  <div class="integration-icon" style="background:#e3f2fd">📅</div>
+                  <div class="integration-info">
+                    <div class="integration-name">Google Calendar / Outlook</div>
+                    <div class="integration-desc">Sync des rendez-vous techniciens avec le calendrier externe</div>
+                  </div>
+                  <span class="badge badge-low" style="opacity:0.5">Roadmap V2</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-divider"></div>
+
+            <div class="settings-section">
+              <div class="settings-section-title">Webhook entrant</div>
+              <div class="settings-form">
+                <div class="sform-row"><label class="sform-label">URL Webhook</label>
+                  <div style="display:flex;gap:8px">
+                    <input class="text-input" value="https://emergencyup-demo.vercel.app/api/call-intake" readonly style="background:var(--gray-50);font-family:monospace;font-size:12px" />
+                    <button class="btn btn-ghost btn-sm" onclick="navigator.clipboard?.writeText('https://emergencyup-demo.vercel.app/api/call-intake');toast('Copié !','success')">Copier</button>
+                  </div>
+                </div>
+                <div class="sform-row"><label class="sform-label">Secret HMAC</label>
+                  <div style="display:flex;gap:8px">
+                    <input class="text-input" value="test-secret-emergencyup-2026" type="password" id="webhook-secret" style="font-family:monospace;font-size:12px" />
+                    <button class="btn btn-ghost btn-sm" onclick="document.getElementById('webhook-secret').type=document.getElementById('webhook-secret').type==='password'?'text':'password'">Voir</button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
+
+          <!-- ═══ COMPTE ═══ -->
+          <div class="stab-content" id="stab-compte">
+            <div class="settings-section">
+              <div class="settings-section-title">Mon compte</div>
+              <div class="settings-form">
+                <div class="sform-row"><label class="sform-label">Nom complet</label><input class="text-input" value="Sophie Reymond" id="compte-name" /></div>
+                <div class="sform-row"><label class="sform-label">Email</label><input class="text-input" value="dispatch@plombexpress.ch" id="compte-email" /></div>
+                <div class="sform-row"><label class="sform-label">Rôle</label><input class="text-input" value="dispatcher" readonly style="background:var(--gray-50)" /></div>
+              </div>
+            </div>
+            <div class="settings-divider"></div>
+            <div class="settings-section">
+              <div class="settings-section-title">Changer le mot de passe</div>
+              <div class="settings-form">
+                <div class="sform-row"><label class="sform-label">Mot de passe actuel</label><input type="password" class="text-input" placeholder="••••••••" /></div>
+                <div class="sform-row two-col"><div><label class="sform-label">Nouveau</label><input type="password" class="text-input" placeholder="••••••••" /></div><div><label class="sform-label">Confirmer</label><input type="password" class="text-input" placeholder="••••••••" /></div></div>
+              </div>
+            </div>
+            <div class="settings-save-row" style="justify-content:space-between">
+              <button class="btn btn-ghost" style="color:var(--red);border-color:var(--red)" onclick="logout()">🚪 Déconnexion</button>
+              <button class="btn btn-primary" onclick="toast('Compte mis à jour','success')">Sauvegarder</button>
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -1059,7 +1346,7 @@ function navTo(page, intId) {
   if (page === 'report') renderReport(currentIntId);
   if (page === 'invoice') renderInvoice(currentIntId);
   if (page === 'technicians') renderTechnicians();
-  if (page === 'modules') renderModules();
+  if (page === 'modules') { switchSettingsTab(currentSettingsTab || 'entreprise'); renderModules(); }
   if (page === 'admin') { renderAdminPanel(); }
   window.scrollTo(0,0);
 }
@@ -1085,7 +1372,7 @@ function renderSidebar() {
     { id: 'nav-report',    icon: '📝', label: 'Rapports',       page: null,           on: m.report },
     { id: 'nav-invoice2',  icon: '💶', label: 'Facturation',    page: null,           on: m.invoice },
     { id: 'nav-tech',      icon: '👷', label: 'Techniciens',    page: 'technicians',  on: true },
-    { id: 'nav-modules',   icon: '🔧', label: 'Modules',        page: 'modules',      on: true },
+    { id: 'nav-modules',   icon: '⚙️', label: 'Paramètres',     page: 'modules',      on: true },
   ];
   let html = '<div class="nav-section">Core</div>';
   items.forEach(item => {
@@ -1911,7 +2198,7 @@ function enterTenant(tid) {
     </div>
     <div class="nav-item active" id="nav-dashboard" onclick="navTo('dashboard')"><span class="icon">📊</span>Dashboard<span class="nav-badge">${getActiveBadge()}</span></div>
     <div class="nav-item" id="nav-tech" onclick="navTo('technicians')"><span class="icon">👷</span>Techniciens</div>
-    <div class="nav-item" id="nav-modules" onclick="navTo('modules')"><span class="icon">🔧</span>Modules</div>
+    <div class="nav-item" id="nav-modules" onclick="navTo('modules')"><span class="icon">⚙️</span>Paramètres</div>
     <div class="nav-section">Compte</div>
     <div class="nav-item" onclick="logout()"><span class="icon">🚪</span>Déconnexion</div>
   `;
@@ -2113,6 +2400,84 @@ function createTenant() {
 
   // Rafraîchir la liste dans le panel admin sans fermer la modal
   toast(`Tenant "${name}" créé — ${Object.values(modules).filter(Boolean).length} modules`, 'success');
+}
+
+// ═══════════════════════════════════════════════════════════
+// SETTINGS TABS
+// ═══════════════════════════════════════════════════════════
+
+let currentSettingsTab = 'entreprise';
+
+function switchSettingsTab(tab) {
+  currentSettingsTab = tab;
+  document.querySelectorAll('.stab').forEach(b => {
+    b.classList.toggle('active', b.dataset.tab === tab);
+  });
+  document.querySelectorAll('.stab-content').forEach(c => {
+    c.classList.toggle('active', c.id === 'stab-' + tab);
+  });
+  // render dynamic content per tab
+  if (tab === 'modules-tab') renderModules();
+  if (tab === 'equipe') renderSettingsTechs();
+}
+
+function renderSettingsTechs() {
+  const el = document.getElementById('settings-tech-list');
+  if (!el) return;
+  const statusColors = { available:'var(--green)', in_progress:'var(--red)', on_route:'var(--orange)', on_break:'var(--gray-400)', offline:'var(--gray-400)' };
+  const statusLabels = { available:'Disponible', in_progress:'Sur site', on_route:'En route', on_break:'Pause', offline:'Hors ligne' };
+  el.innerHTML = TECHNICIANS.map(t => `
+    <div class="staff-row">
+      <div class="user-avatar" style="background:var(--blue);width:36px;height:36px">${t.initials}</div>
+      <div class="staff-info">
+        <div class="staff-name">${t.name}</div>
+        <div class="staff-email">${t.phone} · ${t.exp} ans · ${t.vehicle}</div>
+        <div style="display:flex;gap:4px;margin-top:4px">${t.specialties.map(s=>`<span class="tag">${typeLabels[s]}</span>`).join('')}</div>
+      </div>
+      <div style="text-align:right">
+        <div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;margin-bottom:4px">
+          <div style="width:7px;height:7px;border-radius:50%;background:${statusColors[t.status]||'gray'}"></div>
+          <span style="font-size:11px;color:var(--gray-600)">${statusLabels[t.status]||t.status}</span>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="toast('Édition technicien (mock)','info')">Éditer</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function updateBrandColor(color) {
+  document.getElementById('brand-color-hex').value = color;
+  document.documentElement.style.setProperty('--red', color);
+  toast('Couleur mise à jour en temps réel','info');
+}
+
+let ghlConnected = false;
+function connectGHL() {
+  ghlConnected = !ghlConnected;
+  const badge = document.getElementById('ghl-badge');
+  if (!badge) return;
+  if (ghlConnected) {
+    badge.className = 'badge badge-standard';
+    badge.textContent = 'Connecté';
+    // unlock WhatsApp card visual
+    document.querySelectorAll('.integration-coming-soon').forEach(el => {
+      el.style.borderColor = 'var(--green)';
+      el.querySelector('.btn').textContent = 'Configurer';
+      el.querySelector('.btn').style.opacity = '1';
+      el.querySelector('.btn').onclick = () => toast('WhatsApp 24/24 — configuration GHL active','success');
+    });
+    TENANTS[currentTenant].modules.whatsapp = true;
+    renderSidebar();
+    toast('✅ GoHighLevel connecté — WhatsApp 24/24 débloqué !','success');
+  } else {
+    badge.className = 'badge badge-low';
+    badge.textContent = 'Non connecté';
+    toast('GoHighLevel déconnecté','info');
+  }
+}
+
+function toggleIntegration(name) {
+  toast(`Intégration ${name} — à configurer avec les clés API en production`, 'info');
 }
 
 // ═══════════════════════════════════════════════════════════
