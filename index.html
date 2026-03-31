@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emergency Up — Démo SaaS</title>
+<style>
+:root {
+  --red: #e53935;
+  --red-dark: #b71c1c;
+  --red-light: #ffebee;
+  --orange: #f57c00;
+  --green: #2e7d32;
+  --green-light: #e8f5e9;
+  --blue: #1565c0;
+  --blue-light: #e3f2fd;
+  --gray-50: #fafafa;
+  --gray-100: #f5f5f5;
+  --gray-200: #eeeeee;
+  --gray-300: #e0e0e0;
+  --gray-400: #bdbdbd;
+  --gray-500: #9e9e9e;
+  --gray-600: #757575;
+  --gray-700: #616161;
+  --gray-800: #424242;
+  --gray-900: #212121;
+  --sidebar-w: 240px;
+  --header-h: 56px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--gray-100); color: var(--gray-900); font-size: 14px; }
+
+/* ── Layout ── */
+#app { display: flex; height: 100vh; overflow: hidden; }
+#sidebar { width: var(--sidebar-w); background: #1a1a2e; color: #fff; display: flex; flex-direction: column; flex-shrink: 0; }
+#main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+#topbar { height: var(--header-h); background: #fff; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; padding: 0 20px; gap: 12px; flex-shrink: 0; }
+#content { flex: 1; overflow-y: auto; padding: 24px; }
+
+/* ── Sidebar ── */
+.sidebar-brand { padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.sidebar-brand .logo { display: flex; align-items: center; gap: 8px; }
+.sidebar-brand .logo-icon { width: 32px; height: 32px; background: var(--red); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+.sidebar-brand .logo-text { font-weight: 700; font-size: 15px; }
+.sidebar-brand .tenant-name { font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+
+.sidebar-nav { flex: 1; padding: 8px 0; overflow-y: auto; }
+.nav-section { padding: 12px 16px 4px; font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1px; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 16px; cursor: pointer; color: rgba(255,255,255,0.65); border-left: 3px solid transparent; transition: all 0.15s; font-size: 13px; }
+.nav-item:hover { background: rgba(255,255,255,0.07); color: #fff; }
+.nav-item.active { background: rgba(229,57,53,0.15); color: #fff; border-left-color: var(--red); }
+.nav-item .icon { width: 18px; text-align: center; opacity: 0.8; }
+.nav-badge { margin-left: auto; background: var(--red); color: #fff; font-size: 10px; padding: 1px 6px; border-radius: 10px; font-weight: 600; }
+.nav-item.module-off { opacity: 0.3; pointer-events: none; }
+.nav-item.module-off::after { content: '🔒'; margin-left: auto; font-size: 10px; }
+
+.sidebar-footer { padding: 12px 16px; border-top: 1px solid rgba(255,255,255,0.1); }
+.user-badge { display: flex; align-items: center; gap: 8px; }
+.user-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--red); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; }
+.user-info { flex: 1; min-width: 0; }
+.user-name { font-size: 12px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.user-role { font-size: 10px; color: rgba(255,255,255,0.4); }
+
+/* ── Topbar ── */
+.topbar-title { font-weight: 600; font-size: 16px; flex: 1; }
+.tenant-switcher { display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--gray-100); border-radius: 6px; cursor: pointer; font-size: 12px; border: 1px solid var(--gray-200); }
+.tenant-switcher select { border: none; background: transparent; font-size: 12px; cursor: pointer; outline: none; }
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: all 0.15s; }
+.btn-primary { background: var(--red); color: #fff; }
+.btn-primary:hover { background: var(--red-dark); }
+.btn-secondary { background: var(--gray-200); color: var(--gray-800); }
+.btn-secondary:hover { background: var(--gray-300); }
+.btn-ghost { background: transparent; color: var(--gray-700); border: 1px solid var(--gray-300); }
+.btn-ghost:hover { background: var(--gray-50); }
+.btn-sm { padding: 4px 10px; font-size: 12px; }
+.btn-success { background: var(--green); color: #fff; }
+.btn-warning { background: var(--orange); color: #fff; }
+
+/* ── Cards ── */
+.card { background: #fff; border-radius: 10px; border: 1px solid var(--gray-200); }
+.card-header { padding: 16px 20px; border-bottom: 1px solid var(--gray-100); display: flex; align-items: center; justify-content: space-between; }
+.card-title { font-weight: 600; font-size: 15px; }
+.card-body { padding: 20px; }
+
+/* ── Stats row ── */
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+.stat-card { background: #fff; border-radius: 10px; border: 1px solid var(--gray-200); padding: 16px 20px; }
+.stat-label { font-size: 12px; color: var(--gray-500); margin-bottom: 6px; }
+.stat-value { font-size: 28px; font-weight: 700; line-height: 1; }
+.stat-sub { font-size: 11px; color: var(--gray-500); margin-top: 4px; }
+.stat-card.red .stat-value { color: var(--red); }
+.stat-card.orange .stat-value { color: var(--orange); }
+.stat-card.green .stat-value { color: var(--green); }
+.stat-card.blue .stat-value { color: var(--blue); }
+
+/* ── Status badges ── */
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+.badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.badge-new { background: #e3f2fd; color: #1565c0; }
+.badge-qualified { background: #fff3e0; color: #e65100; }
+.badge-assigned { background: #f3e5f5; color: #6a1b9a; }
+.badge-on_route { background: #fff8e1; color: #f57f17; }
+.badge-in_progress { background: #fff3e0; color: #bf360c; }
+.badge-completed { background: #e8f5e9; color: #1b5e20; }
+.badge-closed { background: var(--gray-100); color: var(--gray-600); }
+.badge-rejected { background: #fce4ec; color: #880e4f; }
+.badge-critical { background: #ffebee; color: #c62828; }
+.badge-urgent { background: #fff3e0; color: #bf360c; }
+.badge-standard { background: #e8f5e9; color: #1b5e20; }
+.badge-low { background: var(--gray-100); color: var(--gray-600); }
+.badge-available { background: #e8f5e9; color: var(--green); }
+.badge-busy { background: #fff3e0; color: var(--orange); }
+
+/* ── Intervention list ── */
+.int-list { display: flex; flex-direction: column; gap: 1px; }
+.int-row { background: #fff; padding: 14px 20px; display: grid; grid-template-columns: 80px 1fr 140px 120px 120px 100px; align-items: center; gap: 12px; cursor: pointer; border-bottom: 1px solid var(--gray-100); transition: background 0.1s; }
+.int-row:hover { background: var(--gray-50); }
+.int-row.urgent-row { border-left: 3px solid var(--red); }
+.int-id { font-size: 11px; color: var(--gray-500); font-family: monospace; }
+.int-client { font-weight: 500; font-size: 13px; }
+.int-addr { font-size: 11px; color: var(--gray-500); margin-top: 2px; }
+.int-type-icon { font-size: 16px; margin-right: 4px; }
+.list-header { background: var(--gray-50); padding: 10px 20px; display: grid; grid-template-columns: 80px 1fr 140px 120px 120px 100px; gap: 12px; font-size: 11px; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--gray-200); border-radius: 10px 10px 0 0; }
+
+/* ── Technician cards ── */
+.tech-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+.tech-card { background: #fff; border: 1px solid var(--gray-200); border-radius: 8px; padding: 14px; }
+.tech-card.available { border-left: 3px solid var(--green); }
+.tech-card.busy { border-left: 3px solid var(--orange); }
+.tech-card.offline { border-left: 3px solid var(--gray-400); opacity: 0.7; }
+.tech-name { font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+.tech-phone { font-size: 11px; color: var(--gray-500); }
+.tech-specialties { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+.tag { background: var(--gray-100); color: var(--gray-700); padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 500; }
+
+/* ── Detail panel ── */
+.detail-grid { display: grid; grid-template-columns: 1fr 340px; gap: 20px; }
+.detail-main { display: flex; flex-direction: column; gap: 16px; }
+.detail-side { display: flex; flex-direction: column; gap: 16px; }
+.field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.field { }
+.field-label { font-size: 11px; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+.field-value { font-size: 14px; color: var(--gray-900); }
+.select-input, .text-input, .textarea-input { width: 100%; padding: 8px 10px; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 13px; outline: none; font-family: inherit; background: #fff; }
+.select-input:focus, .text-input:focus, .textarea-input:focus { border-color: var(--red); box-shadow: 0 0 0 2px rgba(229,57,53,0.1); }
+.textarea-input { resize: vertical; min-height: 80px; }
+
+/* ── Timeline ── */
+.timeline { display: flex; flex-direction: column; gap: 0; }
+.tl-item { display: flex; gap: 12px; padding-bottom: 16px; position: relative; }
+.tl-item:last-child { padding-bottom: 0; }
+.tl-dot { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; position: relative; z-index: 1; }
+.tl-dot.green { background: var(--green-light); color: var(--green); }
+.tl-dot.blue { background: var(--blue-light); color: var(--blue); }
+.tl-dot.orange { background: #fff3e0; color: var(--orange); }
+.tl-dot.red { background: var(--red-light); color: var(--red); }
+.tl-dot.gray { background: var(--gray-100); color: var(--gray-500); }
+.tl-item:not(:last-child) .tl-dot::after { content: ''; position: absolute; top: 28px; left: 50%; transform: translateX(-50%); width: 2px; height: calc(100% + 4px); background: var(--gray-200); z-index: 0; }
+.tl-body { flex: 1; padding-top: 4px; }
+.tl-title { font-size: 13px; font-weight: 500; }
+.tl-time { font-size: 11px; color: var(--gray-500); margin-top: 2px; }
+.tl-note { font-size: 12px; color: var(--gray-600); margin-top: 4px; background: var(--gray-50); padding: 6px 10px; border-radius: 4px; }
+
+/* ── Report form ── */
+.report-section { margin-bottom: 20px; }
+.report-section-title { font-size: 12px; font-weight: 700; color: var(--gray-600); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; border-bottom: 1px solid var(--gray-200); padding-bottom: 6px; }
+.parts-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.parts-table th { background: var(--gray-50); padding: 8px 10px; text-align: left; font-size: 11px; font-weight: 600; color: var(--gray-600); border-bottom: 1px solid var(--gray-200); }
+.parts-table td { padding: 8px 10px; border-bottom: 1px solid var(--gray-100); }
+.parts-table input { width: 100%; border: 1px solid var(--gray-200); border-radius: 4px; padding: 4px 6px; font-size: 12px; }
+.signature-box { border: 2px dashed var(--gray-300); border-radius: 8px; height: 80px; display: flex; align-items: center; justify-content: center; color: var(--gray-400); font-size: 13px; cursor: pointer; margin-top: 8px; }
+.signature-box.signed { border-color: var(--green); background: var(--green-light); color: var(--green); }
+
+/* ── Invoice ── */
+.invoice-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
+.invoice-title { font-size: 24px; font-weight: 700; color: var(--red); }
+.invoice-meta { font-size: 12px; color: var(--gray-600); line-height: 1.8; }
+.invoice-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; }
+.invoice-table th { background: var(--gray-800); color: #fff; padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+.invoice-table td { padding: 10px 12px; border-bottom: 1px solid var(--gray-100); }
+.invoice-table tr:last-child td { border-bottom: none; }
+.invoice-totals { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; margin-top: 12px; }
+.total-row { display: flex; gap: 40px; justify-content: flex-end; font-size: 13px; }
+.total-row.grand { font-weight: 700; font-size: 16px; border-top: 2px solid var(--gray-800); padding-top: 8px; margin-top: 4px; }
+.qr-placeholder { width: 100px; height: 100px; border: 2px solid var(--gray-300); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--gray-400); text-align: center; margin-top: 16px; }
+
+/* ── Module config ── */
+.module-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.module-card { border: 1px solid var(--gray-200); border-radius: 8px; padding: 14px; display: flex; align-items: center; gap: 12px; }
+.module-icon { font-size: 22px; width: 36px; text-align: center; }
+.module-info { flex: 1; }
+.module-name { font-weight: 600; font-size: 13px; }
+.module-desc { font-size: 11px; color: var(--gray-500); margin-top: 2px; }
+.toggle { position: relative; width: 36px; height: 20px; }
+.toggle input { display: none; }
+.toggle-track { position: absolute; inset: 0; background: var(--gray-300); border-radius: 10px; cursor: pointer; transition: background 0.2s; }
+.toggle input:checked + .toggle-track { background: var(--green); }
+.toggle-track::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+.toggle input:checked + .toggle-track::after { transform: translateX(16px); }
+.module-core-tag { font-size: 10px; font-weight: 700; color: var(--red); background: var(--red-light); padding: 1px 6px; border-radius: 4px; }
+
+/* ── Tenant banners ── */
+.tenant-banner { border-radius: 8px; padding: 10px 16px; font-size: 12px; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+.banner-info { background: var(--blue-light); color: var(--blue); border: 1px solid #90caf9; }
+.banner-warn { background: #fff8e1; color: #f57f17; border: 1px solid #ffe082; }
+
+/* ── Modal ── */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 1000; display: none; align-items: center; justify-content: center; }
+.modal-overlay.open { display: flex; }
+.modal { background: #fff; border-radius: 12px; width: 520px; max-width: 95vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
+.modal-header { padding: 20px 24px 16px; border-bottom: 1px solid var(--gray-100); display: flex; align-items: center; justify-content: space-between; }
+.modal-title { font-weight: 700; font-size: 16px; }
+.modal-close { background: none; border: none; font-size: 18px; cursor: pointer; color: var(--gray-500); padding: 4px; }
+.modal-body { padding: 20px 24px; }
+.modal-footer { padding: 16px 24px; border-top: 1px solid var(--gray-100); display: flex; justify-content: flex-end; gap: 10px; }
+.form-row { margin-bottom: 16px; }
+.form-label { font-size: 12px; font-weight: 600; color: var(--gray-700); margin-bottom: 5px; display: block; }
+
+/* ── Notification toast ── */
+.toast-container { position: fixed; top: 16px; right: 16px; z-index: 2000; display: flex; flex-direction: column; gap: 8px; }
+.toast { background: #fff; border: 1px solid var(--gray-200); border-radius: 8px; padding: 12px 16px; font-size: 13px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 10px; min-width: 280px; animation: slideIn 0.2s ease; }
+.toast.success { border-left: 3px solid var(--green); }
+.toast.error { border-left: 3px solid var(--red); }
+.toast.info { border-left: 3px solid var(--blue); }
+@keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+
+/* ── Misc ── */
+.page { display: none; }
+.page.active { display: block; }
+.empty-state { text-align: center; padding: 48px 20px; color: var(--gray-400); }
+.empty-state-icon { font-size: 48px; margin-bottom: 12px; }
+.empty-state-text { font-size: 14px; }
+.divider { height: 1px; background: var(--gray-100); margin: 16px 0; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.dot-green { background: var(--green); }
+.dot-orange { background: var(--orange); }
+.dot-red { background: var(--red); }
+.dot-gray { background: var(--gray-400); }
+.mock-label { font-size: 10px; background: #fff3e0; color: #e65100; padding: 1px 6px; border-radius: 4px; font-weight: 600; vertical-align: middle; margin-left: 4px; }
+</style>
+</head>
+<body>
+
+<div id="app">
+  <!-- SIDEBAR -->
+  <div id="sidebar">
+    <div class="sidebar-brand">
+      <div class="logo">
+        <div class="logo-icon">🚨</div>
+        <div>
+          <div class="logo-text">Emergency Up</div>
+          <div class="tenant-name" id="sidebar-tenant-name">PlombExpress Sàrl</div>
+        </div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav" id="sidebar-nav">
+      <!-- built by JS -->
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-badge">
+        <div class="user-avatar" id="user-avatar">SR</div>
+        <div class="user-info">
+          <div class="user-name" id="user-name">Sophie Reymond</div>
+          <div class="user-role" id="user-role">dispatcher</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div id="main">
+    <div id="topbar">
+      <div class="topbar-title" id="topbar-title">Dashboard</div>
+      <div class="tenant-switcher">
+        <span>🏢</span>
+        <select id="tenant-select" onchange="switchTenant(this.value)">
+          <option value="plomb">PlombExpress — Full (phone+dispatch+report+invoice)</option>
+          <option value="fixitpro">FixItPro — Sans téléphone</option>
+          <option value="artisandoc">ArtisanDoc — Report + Invoice only</option>
+        </select>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="openModal('modal-new-int')">+ Nouvelle intervention</button>
+    </div>
+
+    <div id="content">
+
+      <!-- PAGE: DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+        <div id="dashboard-banner"></div>
+        <div class="stats-grid" id="stats-grid"></div>
+
+        <div class="card" style="margin-bottom:20px">
+          <div class="card-header">
+            <div class="card-title">Interventions actives</div>
+            <div style="display:flex;gap:8px">
+              <select class="select-input" style="width:140px;padding:5px 8px;font-size:12px" id="filter-status" onchange="renderList()">
+                <option value="">Tous statuts</option>
+                <option value="new_request">Nouveau</option>
+                <option value="qualified">Qualifié</option>
+                <option value="assigned">Assigné</option>
+                <option value="on_route">En route</option>
+                <option value="in_progress">En cours</option>
+                <option value="completed">Terminé</option>
+              </select>
+            </div>
+          </div>
+          <div class="list-header">
+            <div>REF</div><div>CLIENT / ADRESSE</div><div>TYPE / URGENCE</div>
+            <div>STATUT</div><div>TECHNICIEN</div><div>HEURE</div>
+          </div>
+          <div class="int-list" id="int-list"></div>
+        </div>
+
+        <div id="phone-module-section"></div>
+      </div>
+
+      <!-- PAGE: INTERVENTION DETAIL -->
+      <div class="page" id="page-detail">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+          <button class="btn btn-ghost btn-sm" onclick="navTo('dashboard')">← Retour</button>
+          <h2 style="font-size:18px;font-weight:700" id="detail-title">Intervention</h2>
+          <div id="detail-status-badge"></div>
+          <div style="margin-left:auto;display:flex;gap:8px" id="detail-actions"></div>
+        </div>
+        <div class="detail-grid">
+          <div class="detail-main" id="detail-main"></div>
+          <div class="detail-side" id="detail-side"></div>
+        </div>
+      </div>
+
+      <!-- PAGE: RAPPORT -->
+      <div class="page" id="page-report">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+          <button class="btn btn-ghost btn-sm" onclick="navTo('detail')">← Retour</button>
+          <h2 style="font-size:18px;font-weight:700">Rapport d'intervention</h2>
+          <span class="mock-label">MOCK — table non créée en DB</span>
+        </div>
+        <div id="report-content"></div>
+      </div>
+
+      <!-- PAGE: FACTURE -->
+      <div class="page" id="page-invoice">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+          <button class="btn btn-ghost btn-sm" onclick="navTo('report')">← Retour</button>
+          <h2 style="font-size:18px;font-weight:700">Aperçu facture</h2>
+          <span class="mock-label">MOCK — table non créée en DB</span>
+        </div>
+        <div id="invoice-content"></div>
+      </div>
+
+      <!-- PAGE: TECHNICIENS -->
+      <div class="page" id="page-technicians">
+        <div style="margin-bottom:20px">
+          <h2 style="font-size:18px;font-weight:700;margin-bottom:4px">Techniciens</h2>
+          <p style="color:var(--gray-500);font-size:13px">Équipe terrain — disponibilité en temps réel</p>
+        </div>
+        <div class="tech-grid" id="tech-grid"></div>
+      </div>
+
+      <!-- PAGE: MODULES / SETTINGS -->
+      <div class="page" id="page-modules">
+        <div style="margin-bottom:20px">
+          <h2 style="font-size:18px;font-weight:700;margin-bottom:4px">Configuration modules</h2>
+          <p style="color:var(--gray-500);font-size:13px">Activer ou désactiver les modules pour ce tenant</p>
+        </div>
+        <div class="two-col">
+          <div>
+            <div class="card">
+              <div class="card-header"><div class="card-title">Modules Core <span class="module-core-tag">obligatoires</span></div></div>
+              <div class="card-body">
+                <div class="module-grid" id="modules-core"></div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="card">
+              <div class="card-header"><div class="card-title">Modules optionnels</div></div>
+              <div class="card-body">
+                <div class="module-grid" id="modules-optional"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- MODAL: NOUVELLE INTERVENTION -->
+<div class="modal-overlay" id="modal-new-int">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Nouvelle intervention</div>
+      <button class="modal-close" onclick="closeModal('modal-new-int')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <label class="form-label">Client</label>
+        <select class="select-input" id="new-int-customer">
+          <option value="c1">Marie Dupont — +41791111111</option>
+          <option value="c2">François Müller — +41792222222</option>
+          <option value="c3">Clara Rossini — +41793333333</option>
+          <option value="c4">Antoine Blanc — +41794444444</option>
+          <option value="c5">Hana Kovač — +41795555555</option>
+          <option value="new">+ Nouveau client</option>
+        </select>
+      </div>
+      <div class="two-col">
+        <div class="form-row">
+          <label class="form-label">Type de problème</label>
+          <select class="select-input" id="new-int-type">
+            <option value="plumbing">🔧 Plomberie</option>
+            <option value="heating">🔥 Chauffage</option>
+            <option value="locksmith">🔑 Serrurerie</option>
+            <option value="electrical">⚡ Électricité</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label class="form-label">Urgence</label>
+          <select class="select-input" id="new-int-urgency">
+            <option value="critical">🔴 Critique</option>
+            <option value="urgent">🟠 Urgent</option>
+            <option value="standard">🟡 Standard</option>
+            <option value="low">⚪ Faible</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label">Adresse</label>
+        <input type="text" class="text-input" id="new-int-addr" value="Rue du Simplon 12, 1006 Lausanne" />
+      </div>
+      <div class="form-row">
+        <label class="form-label">Notes</label>
+        <textarea class="textarea-input" id="new-int-notes" placeholder="Description du problème..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-new-int')">Annuler</button>
+      <button class="btn btn-primary" onclick="createIntervention()">Créer l'intervention</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: ASSIGNER TECHNICIEN -->
+<div class="modal-overlay" id="modal-assign">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Assigner un technicien</div>
+      <button class="modal-close" onclick="closeModal('modal-assign')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="color:var(--gray-600);font-size:13px;margin-bottom:16px">Techniciens disponibles pour cette intervention :</p>
+      <div id="assign-tech-list"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-assign')">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// DATA — issu du seed SQL 001_test_data.sql
+// ═══════════════════════════════════════════════════════════
+
+const TENANTS = {
+  plomb: {
+    id: 'a1b2c3d4-0000-0000-0000-000000000001',
+    name: 'PlombExpress Sàrl',
+    slug: 'plomb-express',
+    plan: 'pro',
+    timezone: 'Europe/Zurich',
+    modules: {
+      phone_intake: true,
+      whatsapp: false,
+      dispatch: true,
+      report: true,
+      invoice: true,
+      quotes: false,
+      signatures: true,
+      attachments: true,
+      contracts: false,
+      client_portal: false,
+      notifications: true,
+      sla: false,
+      analytics: false,
+      white_label: false
+    },
+    user: { name: 'Sophie Reymond', role: 'dispatcher', initials: 'SR' }
+  },
+  fixitpro: {
+    id: 'b2c3d4e5-0000-0000-0000-000000000002',
+    name: 'FixItPro SARL',
+    slug: 'fixitpro',
+    plan: 'starter',
+    timezone: 'Europe/Paris',
+    modules: {
+      phone_intake: false,
+      whatsapp: false,
+      dispatch: true,
+      report: true,
+      invoice: true,
+      quotes: false,
+      signatures: false,
+      attachments: false,
+      contracts: false,
+      client_portal: false,
+      notifications: false,
+      sla: false,
+      analytics: false,
+      white_label: false
+    },
+    user: { name: 'Julien Moreau', role: 'owner', initials: 'JM' }
+  },
+  artisandoc: {
+    id: 'c3d4e5f6-0000-0000-0000-000000000003',
+    name: 'ArtisanDoc',
+    slug: 'artisandoc',
+    plan: 'starter',
+    timezone: 'Europe/Paris',
+    modules: {
+      phone_intake: false,
+      whatsapp: false,
+      dispatch: false,
+      report: true,
+      invoice: true,
+      quotes: false,
+      signatures: true,
+      attachments: false,
+      contracts: false,
+      client_portal: false,
+      notifications: false,
+      sla: false,
+      analytics: false,
+      white_label: false
+    },
+    user: { name: 'Claire Artisan', role: 'owner', initials: 'CA' }
+  }
+};
+
+const TECHNICIANS = [
+  { id: 't30', name: 'Jean Martin',      phone: '+41791234567', specialties: ['plumbing','heating'],          zones: ['Lausanne Centre','Lausanne Ouest'], status: 'available',    initials: 'JM', exp: 12, vehicle: 'Citroën Jumpy' },
+  { id: 't31', name: 'Pierre Rochat',    phone: '+41797654321', specialties: ['plumbing','locksmith'],         zones: ['Lausanne Centre','Lausanne Nord'],  status: 'in_progress',  initials: 'PR', exp: 7,  vehicle: 'Renault Trafic' },
+  { id: 't32', name: 'Amélie Fontaine',  phone: '+41798887766', specialties: ['heating','plumbing'],           zones: ['Lausanne Ouest','Lausanne Nord'],   status: 'on_route',     initials: 'AF', exp: 5,  vehicle: 'Peugeot Expert' },
+  { id: 't33', name: 'Luc Dubois',       phone: '+41796543210', specialties: ['locksmith'],                    zones: ['Lausanne Centre','Lausanne Ouest','Lausanne Nord'], status: 'available', initials: 'LD', exp: 15, vehicle: 'VW Caddy' }
+];
+
+const CUSTOMERS = [
+  { id: 'c1', name: 'Marie Dupont',    phone: '+41791111111', address: 'Rue de Bourg 10',       city: 'Lausanne', cp: '1003', calls: 1 },
+  { id: 'c2', name: 'François Müller', phone: '+41792222222', address: 'Avenue de la Gare 45',  city: 'Lausanne', cp: '1003', calls: 3 },
+  { id: 'c3', name: 'Clara Rossini',   phone: '+41793333333', address: 'Ch. des Berges 12',     city: 'Renens',   cp: '1020', calls: 1 },
+  { id: 'c4', name: 'Antoine Blanc',   phone: '+41794444444', address: 'Rue Saint-Martin 7',    city: 'Lausanne', cp: '1005', calls: 2 },
+  { id: 'c5', name: 'Hana Kovač',      phone: '+41795555555', address: 'Avenue du Léman 89',    city: 'Lausanne', cp: '1006', calls: 1 }
+];
+
+const typeLabels = { plumbing: '🔧 Plomberie', heating: '🔥 Chauffage', locksmith: '🔑 Serrurerie', electrical: '⚡ Électricité', other: '📋 Autre' };
+const urgencyOrder = { critical: 0, urgent: 1, standard: 2, low: 3 };
+const statusLabels = {
+  new_request: 'Nouveau', qualified: 'Qualifié', assigned: 'Assigné',
+  on_route: 'En route', in_progress: 'En cours', completed: 'Terminé',
+  closed: 'Clôturé', rejected_out_of_zone: 'Hors zone'
+};
+const statusFlow = {
+  new_request: ['qualified','assigned','rejected_out_of_zone'],
+  qualified: ['assigned'],
+  assigned: ['on_route'],
+  on_route: ['in_progress'],
+  in_progress: ['completed'],
+  completed: ['closed'],
+  closed: [],
+  rejected_out_of_zone: []
+};
+
+let interventions = [
+  {
+    id: 'INT-001', ref: '#001', company_id: 'a1b2c3d4-0000-0000-0000-000000000001',
+    customer_id: 'c1', tech_id: 't31', zone: 'Lausanne Centre',
+    status: 'in_progress', type: 'plumbing', urgency: 'critical',
+    address: 'Rue de Bourg 10, 1003 Lausanne',
+    notes: 'Fuite importante sous évier — eau partout',
+    internal_notes: 'Client très stressé, priorité absolue',
+    created_ago: 65, assigned_ago: 45, started_ago: 20,
+    timeline: [
+      { icon: '📞', color: 'blue',   title: 'Appel reçu — Marie Dupont',          time: '-65min', note: 'Source: mock / +41791111111' },
+      { icon: '✅', color: 'green',  title: 'Zone validée — Lausanne Centre',      time: '-64min', note: null },
+      { icon: '📋', color: 'blue',   title: 'Intervention créée',                 time: '-64min', note: 'Plomberie · Critique' },
+      { icon: '🚀', color: 'orange', title: 'Dispatch → Pierre Rochat',           time: '-45min', note: 'Strategy: direct_assign · attempt 1' },
+      { icon: '🔧', color: 'red',    title: 'Technicien sur site — En cours',     time: '-20min', note: null }
+    ]
+  },
+  {
+    id: 'INT-002', ref: '#002', company_id: 'a1b2c3d4-0000-0000-0000-000000000001',
+    customer_id: 'c2', tech_id: 't32', zone: 'Lausanne Centre',
+    status: 'on_route', type: 'heating', urgency: 'urgent',
+    address: 'Avenue de la Gare 45, 1003 Lausanne',
+    notes: 'Chaudière en panne — pas de chauffage ni eau chaude',
+    internal_notes: null,
+    created_ago: 45, assigned_ago: 30,
+    timeline: [
+      { icon: '📞', color: 'blue',   title: 'Appel reçu — François Müller',       time: '-45min', note: 'Source: mock / +41792222222' },
+      { icon: '✅', color: 'green',  title: 'Zone validée — Lausanne Centre',      time: '-44min', note: null },
+      { icon: '📋', color: 'blue',   title: 'Intervention créée',                 time: '-44min', note: 'Chauffage · Urgent' },
+      { icon: '🚀', color: 'orange', title: 'Dispatch → Amélie Fontaine',         time: '-30min', note: 'Strategy: direct_assign' },
+      { icon: '🚗', color: 'orange', title: 'Technicienne en route',              time: '-25min', note: 'ETA estimé : ~10 min' }
+    ]
+  },
+  {
+    id: 'INT-003', ref: '#003', company_id: 'a1b2c3d4-0000-0000-0000-000000000001',
+    customer_id: 'c3', tech_id: 't30', zone: 'Lausanne Ouest',
+    status: 'assigned', type: 'plumbing', urgency: 'standard',
+    address: 'Ch. des Berges 12, 1020 Renens',
+    notes: 'Robinet qui fuit — pas urgent',
+    internal_notes: null,
+    created_ago: 20, assigned_ago: 10,
+    timeline: [
+      { icon: '📋', color: 'blue',  title: 'Intervention créée — Manuel',         time: '-20min', note: 'Plomberie · Standard' },
+      { icon: '🚀', color: 'green', title: 'Dispatch → Jean Martin',             time: '-10min', note: 'Strategy: direct_assign' }
+    ]
+  },
+  {
+    id: 'INT-004', ref: '#004', company_id: 'a1b2c3d4-0000-0000-0000-000000000001',
+    customer_id: 'c4', tech_id: null, zone: 'Lausanne Centre',
+    status: 'new_request', type: 'locksmith', urgency: 'urgent',
+    address: 'Rue Saint-Martin 7, 1005 Lausanne',
+    notes: 'Serrure bloquée — client enfermé dehors',
+    internal_notes: null,
+    created_ago: 8,
+    timeline: [
+      { icon: '📞', color: 'blue', title: 'Appel reçu — Antoine Blanc',           time: '-8min',  note: 'Source: mock / +41794444444' },
+      { icon: '✅', color: 'green', title: 'Zone validée',                        time: '-8min',  note: null },
+      { icon: '⚠️', color: 'red',  title: 'Dispatch échoué — aucun tech dispo',  time: '-7min',  note: 'Escalade vers owner en attente' }
+    ]
+  },
+  {
+    id: 'INT-005', ref: '#005', company_id: 'a1b2c3d4-0000-0000-0000-000000000001',
+    customer_id: 'c5', tech_id: null, zone: 'Lausanne Centre',
+    status: 'qualified', type: 'heating', urgency: 'low',
+    address: 'Avenue du Léman 89, 1006 Lausanne',
+    notes: 'Thermostat à régler — pas urgent',
+    internal_notes: null,
+    created_ago: 5,
+    timeline: [
+      { icon: '📋', color: 'blue', title: 'Intervention créée',                   time: '-5min', note: 'Chauffage · Faible' }
+    ]
+  }
+];
+
+let currentTenant = 'plomb';
+let currentPage = 'dashboard';
+let currentIntId = null;
+let reportSigned = false;
+let reportData = null;
+let idCounter = 6;
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+function init() {
+  switchTenant('plomb');
+}
+
+function switchTenant(tid) {
+  currentTenant = tid;
+  document.getElementById('tenant-select').value = tid;
+  const t = TENANTS[tid];
+  document.getElementById('sidebar-tenant-name').textContent = t.name;
+  document.getElementById('user-avatar').textContent = t.user.initials;
+  document.getElementById('user-name').textContent = t.user.name;
+  document.getElementById('user-role').textContent = t.user.role;
+  renderSidebar();
+  renderDashboard();
+  toast(`Tenant: ${t.name}`, 'info');
+}
+
+// ═══════════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════════
+function navTo(page, intId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  currentPage = page;
+  const titles = { dashboard:'Dashboard', detail:'Intervention', report:'Rapport', invoice:'Facture', technicians:'Techniciens', modules:'Modules' };
+  document.getElementById('topbar-title').textContent = titles[page] || page;
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navMap = { dashboard: 'nav-dashboard', technicians: 'nav-tech', modules: 'nav-modules' };
+  if (navMap[page]) { const el = document.getElementById(navMap[page]); if(el) el.classList.add('active'); }
+
+  if (page === 'detail' && intId) {
+    currentIntId = intId;
+    renderDetail(intId);
+  }
+  if (page === 'report') renderReport(currentIntId);
+  if (page === 'invoice') renderInvoice(currentIntId);
+  if (page === 'technicians') renderTechnicians();
+  if (page === 'modules') renderModules();
+  window.scrollTo(0,0);
+}
+
+// ═══════════════════════════════════════════════════════════
+// SIDEBAR
+// ═══════════════════════════════════════════════════════════
+function renderSidebar() {
+  const t = TENANTS[currentTenant];
+  const m = t.modules;
+  const nav = document.getElementById('sidebar-nav');
+  const items = [
+    { id: 'nav-dashboard', icon: '📊', label: 'Dashboard',      page: 'dashboard',    on: true, badge: getActiveBadge() },
+    { id: 'nav-intake',    icon: '📞', label: 'Intake appel',   page: null,           on: m.phone_intake },
+    { id: 'nav-disp',      icon: '⚡', label: 'Dispatch',       page: 'dashboard',    on: m.dispatch },
+    { id: 'nav-report',    icon: '📝', label: 'Rapports',       page: null,           on: m.report },
+    { id: 'nav-invoice2',  icon: '💶', label: 'Facturation',    page: null,           on: m.invoice },
+    { id: 'nav-tech',      icon: '👷', label: 'Techniciens',    page: 'technicians',  on: true },
+    { id: 'nav-modules',   icon: '🔧', label: 'Modules',        page: 'modules',      on: true },
+  ];
+  let html = '<div class="nav-section">Core</div>';
+  items.forEach(item => {
+    const cls = `nav-item${item.on ? '' : ' module-off'}${currentPage === item.page ? ' active' : ''}`;
+    const badge = item.badge ? `<span class="nav-badge">${item.badge}</span>` : '';
+    const lock = !item.on ? '' : '';
+    html += `<div class="${cls}" id="${item.id}" onclick="${item.page ? `navTo('${item.page}')` : 'showModuleOff()'}">
+      <span class="icon">${item.icon}</span>${item.label}${badge}
+    </div>`;
+  });
+  nav.innerHTML = html;
+}
+
+function getActiveBadge() {
+  return interventions.filter(i => !['closed','rejected_out_of_zone','completed'].includes(i.status)).length || null;
+}
+function showModuleOff() { toast('Module non activé pour ce tenant', 'error'); }
+
+// ═══════════════════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════════════════
+function renderDashboard() {
+  const t = TENANTS[currentTenant];
+  const m = t.modules;
+
+  // Banner
+  const banner = document.getElementById('dashboard-banner');
+  if (!m.dispatch) {
+    banner.innerHTML = `<div class="tenant-banner banner-warn">⚠️ Module <strong>Dispatch</strong> désactivé pour ce tenant — la liste d'interventions est en lecture seule</div>`;
+  } else if (!m.phone_intake) {
+    banner.innerHTML = `<div class="tenant-banner banner-info">ℹ️ Module <strong>Téléphone / Call Intake</strong> désactivé — les interventions sont créées manuellement</div>`;
+  } else {
+    banner.innerHTML = '';
+  }
+
+  // Stats
+  const active = interventions.filter(i => !['closed','rejected_out_of_zone'].includes(i.status));
+  const urgent = interventions.filter(i => ['critical','urgent'].includes(i.urgency) && !['closed','completed'].includes(i.status));
+  const avail = TECHNICIANS.filter(t => t.status === 'available').length;
+  const inProg = interventions.filter(i => i.status === 'in_progress').length;
+
+  document.getElementById('stats-grid').innerHTML = `
+    <div class="stat-card red"><div class="stat-label">Actives</div><div class="stat-value">${active.length}</div><div class="stat-sub">interventions</div></div>
+    <div class="stat-card orange"><div class="stat-label">Urgentes</div><div class="stat-value">${urgent.length}</div><div class="stat-sub">critique/urgent</div></div>
+    <div class="stat-card green"><div class="stat-label">Disponibles</div><div class="stat-value">${avail}</div><div class="stat-sub">techniciens</div></div>
+    <div class="stat-card blue"><div class="stat-label">En cours</div><div class="stat-value">${inProg}</div><div class="stat-sub">sur site</div></div>
+  `;
+
+  renderList();
+
+  // Phone module section
+  const phoneSection = document.getElementById('phone-module-section');
+  if (m.phone_intake) {
+    phoneSection.innerHTML = `
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📞 Call Intake — Simulateur</div>
+          <span class="mock-label">MOCK</span>
+        </div>
+        <div class="card-body">
+          <p style="color:var(--gray-600);font-size:13px;margin-bottom:16px">Simule un appel entrant → crée automatiquement une intervention + dispatch</p>
+          <div class="two-col" style="margin-bottom:12px">
+            <div><label class="form-label">Numéro appelant</label><input class="text-input" id="mock-phone" value="+41799000001" /></div>
+            <div><label class="form-label">Type problème</label><select class="select-input" id="mock-type"><option value="plumbing">🔧 Plomberie</option><option value="heating">🔥 Chauffage</option><option value="locksmith">🔑 Serrurerie</option></select></div>
+          </div>
+          <div class="two-col" style="margin-bottom:12px">
+            <div><label class="form-label">Urgence</label><select class="select-input" id="mock-urgency"><option value="critical">🔴 Critique</option><option value="urgent">🟠 Urgent</option><option value="standard">🟡 Standard</option></select></div>
+            <div><label class="form-label">Code postal</label><input class="text-input" id="mock-cp" value="1003" /></div>
+          </div>
+          <button class="btn btn-primary" onclick="simulateCall()">📞 Simuler un appel entrant</button>
+        </div>
+      </div>
+    `;
+  } else {
+    phoneSection.innerHTML = '';
+  }
+}
+
+function renderList() {
+  const filter = document.getElementById('filter-status')?.value || '';
+  const sorted = [...interventions]
+    .filter(i => !filter || i.status === filter)
+    .sort((a, b) => urgencyOrder[a.urgency] - urgencyOrder[b.urgency]);
+
+  if (!sorted.length) {
+    document.getElementById('int-list').innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><div class="empty-state-text">Aucune intervention</div></div>';
+    return;
+  }
+
+  const t = TENANTS[currentTenant];
+  document.getElementById('int-list').innerHTML = sorted.map(int => {
+    const cust = CUSTOMERS.find(c => c.id === int.customer_id) || {};
+    const tech = TECHNICIANS.find(t => t.id === int.tech_id);
+    const isUrgent = ['critical','urgent'].includes(int.urgency);
+    return `<div class="int-row${isUrgent ? ' urgent-row' : ''}" onclick="navTo('detail','${int.id}')">
+      <div class="int-id">${int.ref}</div>
+      <div><div class="int-client">${cust.name || '—'}</div><div class="int-addr">${int.address}</div></div>
+      <div>${typeLabels[int.type]} <span class="badge badge-${int.urgency}">${int.urgency}</span></div>
+      <div><span class="badge badge-${int.status.replace('_request','')}">${statusLabels[int.status]}</span></div>
+      <div style="font-size:12px">${tech ? `<span class="status-dot dot-${tech.status==='available'?'green':tech.status==='in_progress'?'red':'orange'}"></span> ${tech.name}` : '<span style="color:var(--gray-400)">— non assigné</span>'}</div>
+      <div style="font-size:11px;color:var(--gray-500)">−${int.created_ago}min</div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════════
+// DETAIL
+// ═══════════════════════════════════════════════════════════
+function renderDetail(intId) {
+  const int = interventions.find(i => i.id === intId);
+  if (!int) return;
+  const cust = CUSTOMERS.find(c => c.id === int.customer_id) || {};
+  const tech = TECHNICIANS.find(t => t.id === int.tech_id);
+  const t = TENANTS[currentTenant];
+
+  document.getElementById('detail-title').textContent = `Intervention ${int.ref}`;
+  document.getElementById('detail-status-badge').innerHTML = `<span class="badge badge-${int.status.replace('_request','')}">${statusLabels[int.status]}</span>`;
+
+  // Action buttons
+  const nextStatuses = statusFlow[int.status] || [];
+  let actions = '';
+  if (t.modules.dispatch && !int.tech_id && int.status !== 'rejected_out_of_zone') {
+    actions += `<button class="btn btn-primary btn-sm" onclick="openAssign('${intId}')">⚡ Assigner technicien</button>`;
+  }
+  nextStatuses.forEach(s => {
+    const labels = { qualified:'Qualifier', assigned:'Assigner', on_route:'En route', in_progress:'Sur site', completed:'Terminer', closed:'Clôturer', rejected_out_of_zone:'Hors zone' };
+    const colors = { completed:'btn-success', closed:'btn-secondary', rejected_out_of_zone:'btn-ghost' };
+    actions += `<button class="btn ${colors[s]||'btn-warning'} btn-sm" onclick="updateStatus('${intId}','${s}')">${labels[s]}</button>`;
+  });
+  if (t.modules.report && int.status === 'completed') {
+    actions += `<button class="btn btn-primary btn-sm" onclick="navTo('report')">📝 Rapport</button>`;
+  }
+  document.getElementById('detail-actions').innerHTML = actions;
+
+  // Main panel
+  document.getElementById('detail-main').innerHTML = `
+    <div class="card">
+      <div class="card-header"><div class="card-title">Informations</div></div>
+      <div class="card-body">
+        <div class="field-grid">
+          <div class="field"><div class="field-label">Client</div><div class="field-value">${cust.name||'—'}</div></div>
+          <div class="field"><div class="field-label">Téléphone</div><div class="field-value">${cust.phone||'—'}</div></div>
+          <div class="field"><div class="field-label">Adresse</div><div class="field-value">${int.address}</div></div>
+          <div class="field"><div class="field-label">Zone</div><div class="field-value">${int.zone}</div></div>
+          <div class="field"><div class="field-label">Type</div><div class="field-value">${typeLabels[int.type]}</div></div>
+          <div class="field"><div class="field-label">Urgence</div><div class="field-value"><span class="badge badge-${int.urgency}">${int.urgency}</span></div></div>
+        </div>
+        <div class="divider"></div>
+        <div class="field" style="margin-bottom:12px">
+          <div class="field-label">Notes</div>
+          <div class="field-value" style="background:var(--gray-50);padding:10px;border-radius:6px;font-size:13px">${int.notes||'—'}</div>
+        </div>
+        ${int.internal_notes ? `<div class="field"><div class="field-label">Notes internes <span style="color:var(--red)">(dispatcher)</span></div><div class="field-value" style="background:#fff3e0;padding:10px;border-radius:6px;font-size:13px">${int.internal_notes}</div></div>` : ''}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">Technicien assigné</div></div>
+      <div class="card-body">
+        ${tech ? `
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="user-avatar" style="width:40px;height:40px;font-size:14px;background:var(--blue)">${tech.initials}</div>
+            <div>
+              <div style="font-weight:600">${tech.name}</div>
+              <div style="font-size:12px;color:var(--gray-500)">${tech.phone}</div>
+              <div style="display:flex;gap:4px;margin-top:4px">${tech.specialties.map(s=>`<span class="tag">${typeLabels[s]}</span>`).join('')}</div>
+            </div>
+            <div style="margin-left:auto"><span class="badge badge-${tech.status==='available'?'available':tech.status==='in_progress'||tech.status==='on_route'?'busy':''}">${tech.status}</span></div>
+          </div>
+        ` : `<div style="color:var(--gray-400);font-size:13px;text-align:center;padding:16px">Aucun technicien assigné${t.modules.dispatch ? ` — <a href="#" onclick="openAssign('${intId}');return false" style="color:var(--red)">assigner maintenant</a>` : ''}</div>`}
+      </div>
+    </div>
+  `;
+
+  // Side panel: timeline
+  document.getElementById('detail-side').innerHTML = `
+    <div class="card">
+      <div class="card-header"><div class="card-title">Timeline</div></div>
+      <div class="card-body">
+        <div class="timeline">
+          ${int.timeline.map(tl => `
+            <div class="tl-item">
+              <div class="tl-dot ${tl.color}">${tl.icon}</div>
+              <div class="tl-body">
+                <div class="tl-title">${tl.title}</div>
+                <div class="tl-time">${tl.time}</div>
+                ${tl.note ? `<div class="tl-note">${tl.note}</div>` : ''}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Changer statut</div></div>
+      <div class="card-body">
+        ${nextStatuses.length ? nextStatuses.map(s => {
+          const labels = { qualified:'✅ Qualifier', assigned:'📋 Assigner', on_route:'🚗 En route', in_progress:'🔧 Sur site', completed:'✅ Terminer', closed:'🔒 Clôturer', rejected_out_of_zone:'❌ Hors zone' };
+          return `<button class="btn btn-ghost" style="width:100%;margin-bottom:8px;justify-content:flex-start" onclick="updateStatus('${intId}','${s}')">${labels[s]}</button>`;
+        }).join('') : `<div style="color:var(--gray-400);font-size:13px">Statut terminal — aucune transition possible</div>`}
+      </div>
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════════════════════════
+// STATUS UPDATE
+// ═══════════════════════════════════════════════════════════
+function updateStatus(intId, newStatus) {
+  const int = interventions.find(i => i.id === intId);
+  if (!int) return;
+  const old = int.status;
+  int.status = newStatus;
+
+  const icons = { on_route:'🚗', in_progress:'🔧', completed:'✅', closed:'🔒', qualified:'📋', assigned:'🚀' };
+  const colors = { on_route:'orange', in_progress:'red', completed:'green', closed:'gray', qualified:'blue', assigned:'orange' };
+  int.timeline.push({
+    icon: icons[newStatus] || '🔄',
+    color: colors[newStatus] || 'gray',
+    title: `Statut → ${statusLabels[newStatus]}`,
+    time: 'maintenant',
+    note: `Modifié par ${TENANTS[currentTenant].user.name}`
+  });
+
+  toast(`Statut mis à jour : ${statusLabels[newStatus]}`, 'success');
+  renderDetail(intId);
+  renderSidebar();
+
+  if (newStatus === 'completed') {
+    setTimeout(() => {
+      const t = TENANTS[currentTenant];
+      if (t.modules.report) {
+        toast('💡 Intervention terminée — créez le rapport d\'intervention', 'info');
+        document.getElementById('detail-actions').insertAdjacentHTML('beforeend', `<button class="btn btn-primary btn-sm" onclick="navTo('report')">📝 Créer le rapport</button>`);
+      }
+    }, 800);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// ASSIGN
+// ═══════════════════════════════════════════════════════════
+function openAssign(intId) {
+  const int = interventions.find(i => i.id === intId);
+  const avail = TECHNICIANS.filter(t => t.status === 'available' || t.id === 't30');
+  document.getElementById('assign-tech-list').innerHTML = avail.map(tech => `
+    <div class="tech-card available" style="margin-bottom:10px;cursor:pointer" onclick="assignTech('${intId}','${tech.id}')">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="user-avatar" style="background:var(--blue)">${tech.initials}</div>
+        <div style="flex:1">
+          <div class="tech-name">${tech.name}</div>
+          <div class="tech-phone">${tech.phone} · ${tech.exp} ans exp.</div>
+          <div class="tech-specialties">${tech.specialties.map(s=>`<span class="tag">${typeLabels[s]}</span>`).join('')}</div>
+        </div>
+        <button class="btn btn-primary btn-sm">Assigner</button>
+      </div>
+    </div>
+  `).join('');
+  openModal('modal-assign');
+}
+
+function assignTech(intId, techId) {
+  const int = interventions.find(i => i.id === intId);
+  const tech = TECHNICIANS.find(t => t.id === techId);
+  if (!int || !tech) return;
+  int.tech_id = techId;
+  if (int.status === 'new_request' || int.status === 'qualified') int.status = 'assigned';
+  tech.status = 'on_route';
+  int.timeline.push({
+    icon: '🚀', color: 'orange',
+    title: `Assigné → ${tech.name}`,
+    time: 'maintenant',
+    note: 'Override manuel dispatcher'
+  });
+  closeModal('modal-assign');
+  toast(`${tech.name} assigné(e)`, 'success');
+  renderDetail(intId);
+  renderSidebar();
+}
+
+// ═══════════════════════════════════════════════════════════
+// CREATE INTERVENTION
+// ═══════════════════════════════════════════════════════════
+function createIntervention() {
+  const custMap = { c1:'c1', c2:'c2', c3:'c3', c4:'c4', c5:'c5' };
+  const custId = document.getElementById('new-int-customer').value;
+  const type = document.getElementById('new-int-type').value;
+  const urgency = document.getElementById('new-int-urgency').value;
+  const addr = document.getElementById('new-int-addr').value;
+  const notes = document.getElementById('new-int-notes').value;
+
+  const id = `INT-00${idCounter}`;
+  idCounter++;
+
+  interventions.unshift({
+    id, ref: `#00${idCounter-1}`,
+    company_id: 'a1b2c3d4-0000-0000-0000-000000000001',
+    customer_id: custId in custMap ? custId : 'c1',
+    tech_id: null, zone: 'Lausanne Centre',
+    status: 'new_request', type, urgency,
+    address: addr, notes, internal_notes: null,
+    created_ago: 0,
+    timeline: [
+      { icon: '📋', color: 'blue', title: 'Intervention créée — Manuel', time: 'maintenant', note: `${typeLabels[type]} · ${urgency}` }
+    ]
+  });
+
+  // Auto-dispatch si module actif
+  const t = TENANTS[currentTenant];
+  if (t.modules.dispatch) {
+    const availTech = TECHNICIANS.find(t => t.status === 'available');
+    if (availTech) {
+      const newInt = interventions[0];
+      newInt.tech_id = availTech.id;
+      newInt.status = 'assigned';
+      availTech.status = 'on_route';
+      newInt.timeline.push({ icon: '🚀', color: 'orange', title: `Auto-dispatch → ${availTech.name}`, time: 'maintenant', note: 'Strategy: direct_assign' });
+      toast(`✅ Intervention créée + assignée à ${availTech.name}`, 'success');
+    } else {
+      toast('⚠️ Intervention créée — aucun technicien disponible', 'info');
+    }
+  } else {
+    toast('✅ Intervention créée (dispatch non activé)', 'success');
+  }
+
+  closeModal('modal-new-int');
+  renderDashboard();
+}
+
+// ═══════════════════════════════════════════════════════════
+// SIMULATE CALL
+// ═══════════════════════════════════════════════════════════
+function simulateCall() {
+  const phone = document.getElementById('mock-phone').value;
+  const type = document.getElementById('mock-type').value;
+  const urgency = document.getElementById('mock-urgency').value;
+  const cp = document.getElementById('mock-cp').value;
+
+  idCounter++;
+  const id = `INT-00${idCounter}`;
+  const newInt = {
+    id, ref: `#00${idCounter}`,
+    company_id: 'a1b2c3d4-0000-0000-0000-000000000001',
+    customer_id: 'c1', tech_id: null, zone: 'Lausanne Centre',
+    status: 'new_request', type, urgency,
+    address: `CP ${cp}`, notes: `Appel entrant via mock — ${typeLabels[type]}`, internal_notes: null,
+    created_ago: 0,
+    timeline: [
+      { icon: '📞', color: 'blue', title: `Appel entrant — ${phone}`, time: 'maintenant', note: `Source: mock · CP ${cp}` },
+      { icon: '✅', color: 'green', title: 'Zone validée — Lausanne Centre', time: 'maintenant', note: null },
+      { icon: '📋', color: 'blue', title: 'Intervention créée', time: 'maintenant', note: `${typeLabels[type]} · ${urgency}` }
+    ]
+  };
+
+  const avail = TECHNICIANS.find(t => t.status === 'available');
+  if (avail) {
+    newInt.tech_id = avail.id;
+    newInt.status = 'assigned';
+    avail.status = 'on_route';
+    newInt.timeline.push({ icon: '🚀', color: 'orange', title: `Dispatch → ${avail.name}`, time: 'maintenant', note: 'Strategy: direct_assign · attempt 1' });
+  } else {
+    newInt.timeline.push({ icon: '⚠️', color: 'red', title: 'Dispatch échoué — escalade owner', time: 'maintenant', note: 'Aucun technicien disponible' });
+  }
+
+  interventions.unshift(newInt);
+  toast(`📞 Appel simulé — Intervention ${id} créée${avail ? ` + assignée à ${avail.name}` : ' — en attente dispatch'}`, 'success');
+  renderDashboard();
+}
+
+// ═══════════════════════════════════════════════════════════
+// REPORT
+// ═══════════════════════════════════════════════════════════
+function renderReport(intId) {
+  const int = interventions.find(i => i.id === intId);
+  if (!int) return;
+  const cust = CUSTOMERS.find(c => c.id === int.customer_id) || {};
+  reportSigned = false;
+  reportData = {
+    parts: [
+      { ref: 'ROB-001', desc: 'Robinet mélangeur', qty: 1, unit_price: 45.00 },
+      { ref: 'JOI-003', desc: 'Joint torique 22mm', qty: 3, unit_price: 2.50 }
+    ],
+    labor_hours: 1.5,
+    hourly_rate: 89
+  };
+
+  document.getElementById('report-content').innerHTML = `
+    <div class="card" style="max-width:800px">
+      <div class="card-header">
+        <div class="card-title">Rapport d'intervention ${int.ref}</div>
+        <span class="badge badge-${int.status.replace('_request','')}">${statusLabels[int.status]}</span>
+      </div>
+      <div class="card-body">
+        <div class="report-section">
+          <div class="report-section-title">Informations générales</div>
+          <div class="field-grid">
+            <div class="field"><div class="field-label">Client</div><div class="field-value">${cust.name}</div></div>
+            <div class="field"><div class="field-label">Adresse</div><div class="field-value">${int.address}</div></div>
+            <div class="field"><div class="field-label">Type</div><div class="field-value">${typeLabels[int.type]}</div></div>
+            <div class="field"><div class="field-label">Technicien</div><div class="field-value">${TECHNICIANS.find(t=>t.id===int.tech_id)?.name || '—'}</div></div>
+          </div>
+        </div>
+
+        <div class="report-section">
+          <div class="report-section-title">Travaux réalisés</div>
+          <textarea class="textarea-input" id="report-work" style="min-height:100px">Remplacement du robinet mélangeur sous l'évier. Vérification de l'étanchéité. Nettoyage du siphon. Aucune autre fuite détectée.</textarea>
+        </div>
+
+        <div class="report-section">
+          <div class="report-section-title">Pièces utilisées</div>
+          <table class="parts-table">
+            <thead><tr><th>Référence</th><th>Description</th><th>Qté</th><th>Prix unit. (CHF)</th><th>Total</th></tr></thead>
+            <tbody id="parts-tbody">
+              ${reportData.parts.map((p,i) => `
+                <tr>
+                  <td><input value="${p.ref}" onchange="updatePart(${i},'ref',this.value)" /></td>
+                  <td><input value="${p.desc}" onchange="updatePart(${i},'desc',this.value)" style="width:200px" /></td>
+                  <td><input type="number" value="${p.qty}" onchange="updatePart(${i},'qty',parseFloat(this.value))" style="width:50px" /></td>
+                  <td><input type="number" value="${p.unit_price.toFixed(2)}" onchange="updatePart(${i},'unit_price',parseFloat(this.value))" style="width:70px" /></td>
+                  <td>${(p.qty * p.unit_price).toFixed(2)}</td>
+                </tr>`).join('')}
+            </tbody>
+          </table>
+          <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="addPart()">+ Ajouter une pièce</button>
+        </div>
+
+        <div class="report-section">
+          <div class="report-section-title">Main d'œuvre</div>
+          <div class="two-col">
+            <div class="field"><div class="field-label">Heures travaillées</div><input class="text-input" id="report-hours" value="${reportData.labor_hours}" type="number" step="0.5" /></div>
+            <div class="field"><div class="field-label">Taux horaire (CHF)</div><input class="text-input" value="${reportData.hourly_rate}" type="number" readonly style="background:var(--gray-50)" /></div>
+          </div>
+        </div>
+
+        <div class="report-section">
+          <div class="report-section-title">Signature client</div>
+          <div class="signature-box${reportSigned?' signed':''}" id="signature-box" onclick="signReport()">
+            ${reportSigned ? '✅ Signé par le client' : '✍️ Cliquer pour signer (démo)'}
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px">
+          <button class="btn btn-secondary" onclick="navTo('detail')">Annuler</button>
+          <button class="btn btn-primary" id="btn-save-report" onclick="saveReport()">💾 Enregistrer le rapport</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function updatePart(i, field, val) { if(reportData) reportData.parts[i][field] = val; }
+function addPart() {
+  if(!reportData) return;
+  reportData.parts.push({ ref: '', desc: '', qty: 1, unit_price: 0 });
+  renderReport(currentIntId);
+}
+function signReport() {
+  reportSigned = true;
+  const box = document.getElementById('signature-box');
+  box.classList.add('signed');
+  box.textContent = '✅ Signé — Marie Dupont — ' + new Date().toLocaleTimeString('fr-FR');
+  toast('Rapport signé par le client', 'success');
+}
+function saveReport() {
+  const hours = parseFloat(document.getElementById('report-hours').value) || 1.5;
+  if(reportData) reportData.labor_hours = hours;
+  toast('✅ Rapport enregistré (mock)', 'success');
+  setTimeout(() => navTo('invoice'), 600);
+}
+
+// ═══════════════════════════════════════════════════════════
+// INVOICE
+// ═══════════════════════════════════════════════════════════
+function renderInvoice(intId) {
+  const int = interventions.find(i => i.id === intId);
+  if (!int) return;
+  const cust = CUSTOMERS.find(c => c.id === int.customer_id) || {};
+  const parts = reportData?.parts || [];
+  const hours = reportData?.labor_hours || 1.5;
+  const rate = reportData?.hourly_rate || 89;
+
+  const labor = hours * rate;
+  const partsTotal = parts.reduce((s, p) => s + p.qty * p.unit_price, 0);
+  const subtotal = labor + partsTotal;
+  const tva = subtotal * 0.081;
+  const total = subtotal + tva;
+
+  const today = new Date();
+  const due = new Date(today); due.setDate(due.getDate() + 30);
+  const fmt = d => d.toLocaleDateString('fr-CH');
+  const invoiceNum = `2026-${String(Math.floor(Math.random()*900)+100)}`;
+
+  document.getElementById('invoice-content').innerHTML = `
+    <div class="card" style="max-width:800px">
+      <div class="card-header">
+        <div style="display:flex;justify-content:space-between;width:100%">
+          <div class="card-title">Facture ${invoiceNum}</div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-ghost btn-sm" onclick="toast('📄 PDF généré (mock)','info')">📄 Télécharger PDF</button>
+            <button class="btn btn-primary btn-sm" onclick="toast('📧 Facture envoyée par SMS (mock)','success')">📤 Envoyer au client</button>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="invoice-header">
+          <div>
+            <div class="invoice-title">FACTURE</div>
+            <div style="font-size:11px;color:var(--gray-500);margin-top:4px">${invoiceNum}</div>
+          </div>
+          <div class="invoice-meta">
+            <strong>PlombExpress Sàrl</strong><br>
+            Rue du Grand-Pont 8, 1003 Lausanne<br>
+            CHE-123.456.789 MWST<br>
+            contact@plombexpress.ch
+          </div>
+        </div>
+
+        <div class="two-col" style="margin-bottom:20px">
+          <div style="background:var(--gray-50);padding:12px;border-radius:6px">
+            <div style="font-size:11px;font-weight:600;color:var(--gray-500);margin-bottom:6px">FACTURER À</div>
+            <div style="font-weight:600">${cust.name}</div>
+            <div style="font-size:12px;color:var(--gray-600)">${cust.address}<br>${cust.cp} ${cust.city}<br>${cust.phone}</div>
+          </div>
+          <div style="background:var(--gray-50);padding:12px;border-radius:6px">
+            <div style="font-size:11px;font-weight:600;color:var(--gray-500);margin-bottom:6px">DÉTAILS</div>
+            <div style="font-size:12px;line-height:2">
+              <strong>Date :</strong> ${fmt(today)}<br>
+              <strong>Échéance :</strong> ${fmt(due)}<br>
+              <strong>Réf. intervention :</strong> ${int.ref}<br>
+              <strong>Statut :</strong> <span style="color:var(--orange)">En attente</span>
+            </div>
+          </div>
+        </div>
+
+        <table class="invoice-table">
+          <thead><tr><th>Description</th><th>Qté</th><th>P.U. (CHF)</th><th>Total (CHF)</th></tr></thead>
+          <tbody>
+            <tr><td>Main d'œuvre — ${typeLabels[int.type]}</td><td>${hours}h</td><td>${rate.toFixed(2)}</td><td>${labor.toFixed(2)}</td></tr>
+            ${parts.map(p => `<tr><td>${p.desc || p.ref}</td><td>${p.qty}</td><td>${p.unit_price.toFixed(2)}</td><td>${(p.qty*p.unit_price).toFixed(2)}</td></tr>`).join('')}
+          </tbody>
+        </table>
+
+        <div class="invoice-totals">
+          <div class="total-row"><span>Sous-total HT</span><span>${subtotal.toFixed(2)} CHF</span></div>
+          <div class="total-row"><span>TVA 8.1%</span><span>${tva.toFixed(2)} CHF</span></div>
+          <div class="total-row grand"><span>Total TTC</span><span>${total.toFixed(2)} CHF</span></div>
+        </div>
+
+        <div style="margin-top:20px;padding:12px;background:var(--gray-50);border-radius:6px;font-size:12px;color:var(--gray-600)">
+          <strong>Coordonnées bancaires :</strong> CH56 0483 5012 3456 7800 9 — PlombExpress Sàrl<br>
+          Veuillez indiquer la référence <strong>${invoiceNum}</strong> lors du paiement.
+        </div>
+
+        <div style="display:flex;align-items:center;gap:16px;margin-top:16px">
+          <div class="qr-placeholder">QR-Bill<br>CH CHF</div>
+          <div style="font-size:11px;color:var(--gray-500)">
+            QR-code de paiement (mock)<br>
+            Compatible e-banking suisse<br>
+            IBAN CH56 0483 5012 3456 7800 9<br>
+            <span class="mock-label">MOCK — PDF réel via Edge Function</span>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px">
+          <button class="btn btn-secondary" onclick="navTo('report')">← Modifier rapport</button>
+          <button class="btn btn-success" onclick="markPaid()">✅ Marquer comme payée</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function markPaid() {
+  toast('✅ Facture marquée comme payée (mock)', 'success');
+  const int = interventions.find(i => i.id === currentIntId);
+  if (int && int.status === 'completed') {
+    int.status = 'closed';
+    int.timeline.push({ icon: '🔒', color: 'gray', title: 'Facture payée — Intervention clôturée', time: 'maintenant', note: null });
+    setTimeout(() => navTo('dashboard'), 800);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// TECHNICIANS
+// ═══════════════════════════════════════════════════════════
+function renderTechnicians() {
+  const statusClass = { available:'available', in_progress:'busy', on_route:'busy', on_break:'busy', offline:'offline' };
+  const statusLabel = { available:'Disponible', in_progress:'Sur site', on_route:'En route', on_break:'Pause', offline:'Hors ligne' };
+  document.getElementById('tech-grid').innerHTML = TECHNICIANS.map(t => {
+    const int = interventions.find(i => i.tech_id === t.id && !['closed','completed'].includes(i.status));
+    return `
+      <div class="tech-card ${statusClass[t.status]||''}">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="user-avatar" style="background:var(--blue)">${t.initials}</div>
+            <div>
+              <div class="tech-name">${t.name}</div>
+              <div class="tech-phone">${t.phone}</div>
+            </div>
+          </div>
+          <span class="badge badge-${t.status==='available'?'available':'busy'}">${statusLabel[t.status]||t.status}</span>
+        </div>
+        <div style="font-size:11px;color:var(--gray-500);margin-bottom:6px">🚗 ${t.vehicle} · ${t.exp} ans</div>
+        <div class="tech-specialties">${t.specialties.map(s=>`<span class="tag">${typeLabels[s]}</span>`).join('')}</div>
+        <div style="font-size:11px;color:var(--gray-500);margin-top:6px">📍 ${t.zones.join(', ')}</div>
+        ${int ? `<div style="margin-top:8px;padding:6px 8px;background:var(--red-light);border-radius:4px;font-size:11px;color:var(--red)">📋 ${int.ref} — ${statusLabels[int.status]}</div>` : ''}
+        <div style="display:flex;gap:6px;margin-top:10px">
+          <button class="btn btn-ghost btn-sm" style="flex:1" onclick="toggleTechStatus('${t.id}')">
+            ${t.status==='available'?'⏸ Mettre en pause':'▶ Disponible'}
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function toggleTechStatus(techId) {
+  const tech = TECHNICIANS.find(t => t.id === techId);
+  if (!tech) return;
+  tech.status = tech.status === 'available' ? 'on_break' : 'available';
+  toast(`${tech.name} : ${tech.status}`, 'info');
+  renderTechnicians();
+}
+
+// ═══════════════════════════════════════════════════════════
+// MODULES CONFIG
+// ═══════════════════════════════════════════════════════════
+const MODULE_DEFS = {
+  core: [
+    { key: null, icon: '🏢', name: 'Multi-tenant', desc: 'Isolation par tenant + RLS' },
+    { key: null, icon: '👤', name: 'Users & Rôles', desc: 'owner/admin/dispatcher/tech' },
+    { key: null, icon: '📋', name: 'Interventions', desc: 'Lifecycle + state machine' },
+    { key: 'dispatch', icon: '⚡', name: 'Dispatch', desc: 'Auto-assign + fallback chain' },
+    { key: 'report', icon: '📝', name: 'Rapports', desc: 'Rapport + signature' },
+    { key: 'invoice', icon: '💶', name: 'Facturation', desc: 'TVA + QR-bill CHF' },
+  ],
+  optional: [
+    { key: 'phone_intake', icon: '📞', name: 'Téléphone / Intake', desc: 'Webhook Twilio / VAPI / mock' },
+    { key: 'whatsapp', icon: '💬', name: 'WhatsApp', desc: 'Intake via WhatsApp Business' },
+    { key: 'signatures', icon: '✍️', name: 'Signatures', desc: 'Signature client sur rapport' },
+    { key: 'attachments', icon: '📷', name: 'Photos/PJ', desc: 'Photos avant/après' },
+    { key: 'notifications', icon: '🔔', name: 'Notifications', desc: 'SMS / email / push' },
+    { key: 'contracts', icon: '📃', name: 'Contrats récurrents', desc: 'Maintenance périodique' },
+    { key: 'client_portal', icon: '🌐', name: 'Portail client', desc: 'Suivi self-service' },
+    { key: 'quotes', icon: '📊', name: 'Devis', desc: 'Devis avant intervention' },
+    { key: 'sla', icon: '⏱️', name: 'SLA / Escalade', desc: 'Délais contractuels' },
+    { key: 'analytics', icon: '📈', name: 'Analytics', desc: 'KPIs, rapports activité' },
+    { key: 'white_label', icon: '🎨', name: 'White-label', desc: 'Logo, couleurs, domaine' },
+  ]
+};
+
+function renderModules() {
+  const t = TENANTS[currentTenant];
+  const m = t.modules;
+
+  document.getElementById('modules-core').innerHTML = MODULE_DEFS.core.map(mod => `
+    <div class="module-card">
+      <div class="module-icon">${mod.icon}</div>
+      <div class="module-info">
+        <div class="module-name">${mod.name}</div>
+        <div class="module-desc">${mod.desc}</div>
+      </div>
+      ${mod.key ? `
+        <label class="toggle">
+          <input type="checkbox" ${m[mod.key]?'checked':''} onchange="toggleModule('${mod.key}',this.checked)">
+          <div class="toggle-track"></div>
+        </label>
+      ` : `<span class="module-core-tag">CORE</span>`}
+    </div>
+  `).join('');
+
+  document.getElementById('modules-optional').innerHTML = MODULE_DEFS.optional.map(mod => `
+    <div class="module-card">
+      <div class="module-icon">${mod.icon}</div>
+      <div class="module-info">
+        <div class="module-name">${mod.name}</div>
+        <div class="module-desc">${mod.desc}</div>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" ${m[mod.key]?'checked':''} onchange="toggleModule('${mod.key}',this.checked)">
+        <div class="toggle-track"></div>
+      </label>
+    </div>
+  `).join('');
+}
+
+function toggleModule(key, val) {
+  TENANTS[currentTenant].modules[key] = val;
+  toast(`Module ${key} : ${val ? 'activé' : 'désactivé'}`, val ? 'success' : 'info');
+  renderSidebar();
+  renderDashboard();
+}
+
+// ═══════════════════════════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════════════════════════
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.addEventListener('click', e => {
+  if (e.target.classList.contains('modal-overlay')) {
+    e.target.classList.remove('open');
+  }
+});
+
+// ═══════════════════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════════════════
+function toast(msg, type = 'info') {
+  const icons = { success: '✅', error: '❌', info: 'ℹ️' };
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.innerHTML = `<span>${icons[type]||'•'}</span><span>${msg}</span>`;
+  document.getElementById('toast-container').appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+
+// ── Boot ──
+init();
+</script>
+</body>
+</html>
