@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Emergency Up — Démo SaaS</title>
+<title>Emergency Up — Plateforme SaaS</title>
 <style>
 :root {
   --red: #e53935;
@@ -238,9 +238,74 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .dot-red { background: var(--red); }
 .dot-gray { background: var(--gray-400); }
 .mock-label { font-size: 10px; background: #fff3e0; color: #e65100; padding: 1px 6px; border-radius: 4px; font-weight: 600; vertical-align: middle; margin-left: 4px; }
+
+/* ── Login Screen ── */
+#login-screen { position: fixed; inset: 0; background: #0f0f1a; z-index: 9999; display: flex; align-items: center; justify-content: center; }
+#login-screen.hidden { display: none; }
+.login-box { width: 400px; }
+.login-logo { text-align: center; margin-bottom: 40px; }
+.login-logo-icon { width: 56px; height: 56px; background: var(--red); border-radius: 14px; display: inline-flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 12px; }
+.login-logo-name { font-size: 26px; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+.login-logo-sub { font-size: 13px; color: rgba(255,255,255,0.4); margin-top: 4px; }
+.login-card { background: #1a1a2e; border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 32px; }
+.login-title { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+.login-subtitle { font-size: 13px; color: rgba(255,255,255,0.4); margin-bottom: 28px; }
+.login-field { margin-bottom: 16px; }
+.login-label { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.5); margin-bottom: 6px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
+.login-input { width: 100%; padding: 11px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; font-size: 14px; color: #fff; outline: none; font-family: inherit; transition: border-color 0.15s; }
+.login-input:focus { border-color: var(--red); background: rgba(255,255,255,0.08); }
+.login-input::placeholder { color: rgba(255,255,255,0.2); }
+.login-btn { width: 100%; padding: 12px; background: var(--red); color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 8px; transition: background 0.15s; }
+.login-btn:hover { background: var(--red-dark); }
+.login-error { background: rgba(229,57,53,0.15); border: 1px solid rgba(229,57,53,0.3); color: #ef9a9a; padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-top: 12px; display: none; }
+.login-footer { text-align: center; margin-top: 20px; font-size: 12px; color: rgba(255,255,255,0.2); }
+
+/* ── Super Admin Panel ── */
+.admin-banner { background: linear-gradient(135deg, #1a1a2e, #16213e); border-bottom: 2px solid var(--red); padding: 10px 20px; display: flex; align-items: center; gap: 12px; color: #fff; font-size: 13px; }
+.admin-badge { background: var(--red); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 1px; }
+.platform-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+.tenant-row { background: #fff; border: 1px solid var(--gray-200); border-radius: 10px; padding: 16px 20px; display: grid; grid-template-columns: 40px 1fr 100px 120px 100px 120px; align-items: center; gap: 14px; margin-bottom: 8px; cursor: pointer; transition: box-shadow 0.15s; }
+.tenant-row:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+.tenant-avatar { width: 36px; height: 36px; border-radius: 8px; background: var(--red); display: flex; align-items: center; justify-content: center; font-size: 16px; color: #fff; }
+.tenant-name-block .tn { font-weight: 600; font-size: 14px; }
+.tenant-name-block .ts { font-size: 11px; color: var(--gray-500); }
+.plan-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+.plan-starter { background: var(--gray-100); color: var(--gray-600); }
+.plan-pro { background: #e8eaf6; color: #3949ab; }
+.plan-enterprise { background: #fce4ec; color: #c2185b; }
+.module-dots { display: flex; gap: 3px; flex-wrap: wrap; }
+.mdot { width: 8px; height: 8px; border-radius: 50%; }
+.mdot-on { background: var(--green); }
+.mdot-off { background: var(--gray-200); }
 </style>
 </head>
 <body>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-logo-icon">🚨</div>
+      <div class="login-logo-name">Emergency Up</div>
+      <div class="login-logo-sub">Plateforme SaaS · Gestion d'interventions terrain</div>
+    </div>
+    <div class="login-card">
+      <div class="login-title">Connexion</div>
+      <div class="login-subtitle">Accès réservé aux comptes autorisés</div>
+      <div class="login-field">
+        <label class="login-label">Adresse email</label>
+        <input type="email" class="login-input" id="login-email" placeholder="votre@email.com" onkeydown="if(event.key==='Enter')doLogin()" />
+      </div>
+      <div class="login-field">
+        <label class="login-label">Mot de passe</label>
+        <input type="password" class="login-input" id="login-password" placeholder="••••••••••" onkeydown="if(event.key==='Enter')doLogin()" />
+      </div>
+      <button class="login-btn" onclick="doLogin()">Se connecter →</button>
+      <div class="login-error" id="login-error">Email ou mot de passe incorrect.</div>
+    </div>
+    <div class="login-footer">Emergency Up © 2026 — SaaS multi-tenant</div>
+  </div>
+</div>
 
 <div id="app">
   <!-- SIDEBAR -->
@@ -276,7 +341,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
       <div class="topbar-title" id="topbar-title">Dashboard</div>
       <div class="tenant-switcher">
         <span>🏢</span>
-        <select id="tenant-select" onchange="switchTenant(this.value)">
+        <select id="tenant-select" onchange="currentUser&&currentUser.role==='platform_admin'?enterTenant(this.value):switchTenant(this.value)">
           <option value="plomb">PlombExpress — Full (phone+dispatch+report+invoice)</option>
           <option value="fixitpro">FixItPro — Sans téléphone</option>
           <option value="artisandoc">ArtisanDoc — Report + Invoice only</option>
@@ -358,6 +423,53 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
           <p style="color:var(--gray-500);font-size:13px">Équipe terrain — disponibilité en temps réel</p>
         </div>
         <div class="tech-grid" id="tech-grid"></div>
+      </div>
+
+      <!-- PAGE: SUPER ADMIN -->
+      <div class="page" id="page-admin">
+        <div style="margin-bottom:24px">
+          <h2 style="font-size:20px;font-weight:800;margin-bottom:4px">Platform Admin</h2>
+          <p style="color:var(--gray-500);font-size:13px">Vue globale de tous les tenants · accès réservé super admin</p>
+        </div>
+
+        <!-- Platform Stats -->
+        <div class="platform-grid" style="margin-bottom:24px">
+          <div class="stat-card blue"><div class="stat-label">Tenants actifs</div><div class="stat-value">3</div><div class="stat-sub">sur la plateforme</div></div>
+          <div class="stat-card green"><div class="stat-label">Interventions totales</div><div class="stat-value">5</div><div class="stat-sub">toutes companies</div></div>
+          <div class="stat-card orange"><div class="stat-label">Techniciens</div><div class="stat-value">4</div><div class="stat-sub">profils actifs</div></div>
+        </div>
+
+        <!-- Tenants Table -->
+        <div class="card" style="margin-bottom:24px">
+          <div class="card-header">
+            <div class="card-title">Tous les tenants</div>
+            <button class="btn btn-primary btn-sm" onclick="toast('Création tenant — à connecter à Supabase','info')">+ Nouveau tenant</button>
+          </div>
+          <div style="padding:4px 0">
+            <div style="display:grid;grid-template-columns:40px 1fr 100px 120px 100px 120px;gap:14px;padding:10px 20px;font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--gray-100)">
+              <div></div><div>Tenant</div><div>Plan</div><div>Modules actifs</div><div>Interventions</div><div>Action</div>
+            </div>
+            <div id="admin-tenant-list"></div>
+          </div>
+        </div>
+
+        <!-- Module Matrix -->
+        <div class="card">
+          <div class="card-header"><div class="card-title">Matrice modules / tenants</div></div>
+          <div class="card-body" style="overflow-x:auto">
+            <table style="width:100%;border-collapse:collapse;font-size:12px;min-width:700px">
+              <thead>
+                <tr style="border-bottom:2px solid var(--gray-200)">
+                  <th style="text-align:left;padding:8px 12px;font-weight:700;color:var(--gray-700)">Module</th>
+                  <th style="padding:8px 16px;text-align:center;font-weight:700;color:var(--gray-700)">PlombExpress</th>
+                  <th style="padding:8px 16px;text-align:center;font-weight:700;color:var(--gray-700)">FixItPro</th>
+                  <th style="padding:8px 16px;text-align:center;font-weight:700;color:var(--gray-700)">ArtisanDoc</th>
+                </tr>
+              </thead>
+              <tbody id="admin-matrix-body"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
 
       <!-- PAGE: MODULES / SETTINGS -->
@@ -662,8 +774,8 @@ let idCounter = 6;
 // ═══════════════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════════════
-function init() {
-  switchTenant('plomb');
+function init(tid) {
+  switchTenant(tid || 'plomb');
 }
 
 function switchTenant(tid) {
@@ -686,7 +798,7 @@ function navTo(page, intId) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
   currentPage = page;
-  const titles = { dashboard:'Dashboard', detail:'Intervention', report:'Rapport', invoice:'Facture', technicians:'Techniciens', modules:'Modules' };
+  const titles = { dashboard:'Dashboard', detail:'Intervention', report:'Rapport', invoice:'Facture', technicians:'Techniciens', modules:'Modules', admin:'Platform Admin' };
   document.getElementById('topbar-title').textContent = titles[page] || page;
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   const navMap = { dashboard: 'nav-dashboard', technicians: 'nav-tech', modules: 'nav-modules' };
@@ -700,6 +812,7 @@ function navTo(page, intId) {
   if (page === 'invoice') renderInvoice(currentIntId);
   if (page === 'technicians') renderTechnicians();
   if (page === 'modules') renderModules();
+  if (page === 'admin') { renderAdminPanel(); }
   window.scrollTo(0,0);
 }
 
@@ -1434,8 +1547,212 @@ function toast(msg, type = 'info') {
   setTimeout(() => el.remove(), 3500);
 }
 
+// ═══════════════════════════════════════════════════════════
+// AUTH / LOGIN
+// ═══════════════════════════════════════════════════════════
+
+const ACCOUNTS = [
+  {
+    email: 'massimo.tf.buisness@gmail.com',
+    password: 'emergencyup2026',
+    role: 'platform_admin',
+    name: 'Massimo',
+    initials: 'MA'
+  },
+  {
+    email: 'owner@plombexpress.ch',
+    password: 'demo1234',
+    role: 'owner',
+    name: 'Marc Chevalley',
+    initials: 'MC',
+    tenant: 'plomb'
+  },
+  {
+    email: 'dispatch@plombexpress.ch',
+    password: 'demo1234',
+    role: 'dispatcher',
+    name: 'Sophie Reymond',
+    initials: 'SR',
+    tenant: 'plomb'
+  }
+];
+
+let currentUser = null;
+
+function doLogin() {
+  const email = document.getElementById('login-email').value.trim().toLowerCase();
+  const password = document.getElementById('login-password').value;
+  const errEl = document.getElementById('login-error');
+  errEl.style.display = 'none';
+
+  const account = ACCOUNTS.find(a => a.email.toLowerCase() === email && a.password === password);
+
+  if (!account) {
+    errEl.style.display = 'block';
+    document.getElementById('login-password').value = '';
+    return;
+  }
+
+  currentUser = account;
+  document.getElementById('login-screen').classList.add('hidden');
+
+  if (account.role === 'platform_admin') {
+    bootAsAdmin();
+  } else {
+    switchTenant(account.tenant || 'plomb');
+    // update user display
+    document.getElementById('user-avatar').textContent = account.initials;
+    document.getElementById('user-name').textContent = account.name;
+    document.getElementById('user-role').textContent = account.role;
+  }
+}
+
+function bootAsAdmin() {
+  // inject admin banner in topbar
+  document.getElementById('topbar-title').innerHTML = `
+    <span class="admin-badge">Platform Admin</span>
+    <span style="margin-left:8px">Emergency Up</span>
+  `;
+  // Update sidebar user block
+  document.getElementById('user-avatar').textContent = 'MA';
+  document.getElementById('user-avatar').style.background = '#6a1b9a';
+  document.getElementById('user-name').textContent = 'Massimo';
+  document.getElementById('user-role').textContent = 'platform_admin';
+
+  // add admin nav item
+  const nav = document.getElementById('sidebar-nav');
+  nav.innerHTML = `
+    <div class="nav-section">Platform</div>
+    <div class="nav-item active" id="nav-admin" onclick="navTo('admin')"><span class="icon">🏛️</span>Platform Admin</div>
+    <div class="nav-section">Tenants</div>
+    <div class="nav-item" onclick="enterTenant('plomb')"><span class="icon">🔧</span>PlombExpress Sàrl</div>
+    <div class="nav-item" onclick="enterTenant('fixitpro')"><span class="icon">⚡</span>FixItPro SARL</div>
+    <div class="nav-item" onclick="enterTenant('artisandoc')"><span class="icon">📝</span>ArtisanDoc</div>
+    <div class="nav-section">Compte</div>
+    <div class="nav-item" onclick="logout()"><span class="icon">🚪</span>Déconnexion</div>
+  `;
+
+  navTo('admin');
+  renderAdminPanel();
+}
+
+function enterTenant(tid) {
+  // switch into tenant view
+  const nav = document.getElementById('sidebar-nav');
+  const topbar = document.getElementById('topbar-title');
+  currentTenant = tid;
+  const t = TENANTS[tid];
+  document.getElementById('sidebar-tenant-name').textContent = t.name;
+
+  // rebuild nav with back button
+  nav.innerHTML = `
+    <div class="nav-section" style="display:flex;align-items:center;justify-content:space-between;padding-right:12px">
+      <span>Tenant</span>
+      <span style="cursor:pointer;color:var(--red);font-size:10px" onclick="bootAsAdmin()">← Admin</span>
+    </div>
+    <div class="nav-item active" id="nav-dashboard" onclick="navTo('dashboard')"><span class="icon">📊</span>Dashboard<span class="nav-badge">${getActiveBadge()}</span></div>
+    <div class="nav-item" id="nav-tech" onclick="navTo('technicians')"><span class="icon">👷</span>Techniciens</div>
+    <div class="nav-item" id="nav-modules" onclick="navTo('modules')"><span class="icon">🔧</span>Modules</div>
+    <div class="nav-section">Compte</div>
+    <div class="nav-item" onclick="logout()"><span class="icon">🚪</span>Déconnexion</div>
+  `;
+  topbar.innerHTML = `<span class="admin-badge" style="background:var(--blue)">TENANT</span> <span style="margin-left:8px">${t.name}</span>`;
+  renderDashboard();
+  navTo('dashboard');
+}
+
+function logout() {
+  currentUser = null;
+  document.getElementById('login-screen').classList.remove('hidden');
+  document.getElementById('login-email').value = '';
+  document.getElementById('login-password').value = '';
+  document.getElementById('login-error').style.display = 'none';
+  // reset topbar
+  document.getElementById('topbar-title').textContent = 'Dashboard';
+  document.getElementById('user-avatar').style.background = '';
+}
+
+// ═══════════════════════════════════════════════════════════
+// ADMIN PANEL
+// ═══════════════════════════════════════════════════════════
+
+function renderAdminPanel() {
+  // Tenant list
+  const tenantList = document.getElementById('admin-tenant-list');
+  if (!tenantList) return;
+
+  const plans = { starter:'plan-starter', pro:'plan-pro', enterprise:'plan-enterprise' };
+  const tenantIntCount = { plomb: 5, fixitpro: 0, artisandoc: 0 };
+  const tenantEmojis = { plomb:'🔧', fixitpro:'⚡', artisandoc:'📝' };
+
+  tenantList.innerHTML = Object.entries(TENANTS).map(([key, t]) => {
+    const modOn = Object.values(t.modules).filter(Boolean).length;
+    const modTotal = Object.keys(t.modules).length;
+    const dots = Object.values(t.modules).map(v =>
+      `<div class="mdot ${v?'mdot-on':'mdot-off'}" title="${v?'actif':'inactif'}"></div>`
+    ).join('');
+
+    return `
+      <div class="tenant-row" onclick="enterTenant('${key}')">
+        <div class="tenant-avatar">${tenantEmojis[key]}</div>
+        <div class="tenant-name-block">
+          <div class="tn">${t.name}</div>
+          <div class="ts">slug: ${t.slug} · ${t.timezone}</div>
+        </div>
+        <div><span class="plan-badge ${plans[t.plan]||'plan-starter'}">${t.plan}</span></div>
+        <div>
+          <div style="font-size:11px;color:var(--gray-500);margin-bottom:4px">${modOn}/${modTotal} actifs</div>
+          <div class="module-dots">${dots}</div>
+        </div>
+        <div style="font-weight:700;font-size:16px;color:var(--gray-800)">${tenantIntCount[key]}</div>
+        <div>
+          <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();enterTenant('${key}')">Entrer →</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Module matrix
+  const matrixBody = document.getElementById('admin-matrix-body');
+  if (!matrixBody) return;
+
+  const allModules = [
+    { key:'phone_intake', label:'📞 Téléphone Intake' },
+    { key:'dispatch',     label:'⚡ Dispatch' },
+    { key:'report',       label:'📝 Rapports' },
+    { key:'invoice',      label:'💶 Facturation' },
+    { key:'signatures',   label:'✍️ Signatures' },
+    { key:'attachments',  label:'📷 Photos/PJ' },
+    { key:'notifications',label:'🔔 Notifications' },
+    { key:'whatsapp',     label:'💬 WhatsApp' },
+    { key:'contracts',    label:'📃 Contrats' },
+    { key:'client_portal',label:'🌐 Portail client' },
+    { key:'quotes',       label:'📊 Devis' },
+    { key:'sla',          label:'⏱️ SLA' },
+    { key:'analytics',    label:'📈 Analytics' },
+    { key:'white_label',  label:'🎨 White-label' },
+  ];
+
+  const tenantKeys = ['plomb','fixitpro','artisandoc'];
+  const cell = v => v
+    ? `<td style="text-align:center;padding:8px"><span style="color:var(--green);font-size:16px">✓</span></td>`
+    : `<td style="text-align:center;padding:8px"><span style="color:var(--gray-300);font-size:14px">—</span></td>`;
+
+  matrixBody.innerHTML = allModules.map((m, i) => `
+    <tr style="border-bottom:1px solid var(--gray-100);${i%2===0?'background:var(--gray-50)':''}">
+      <td style="padding:8px 12px;font-size:12px;font-weight:500">${m.label}</td>
+      ${tenantKeys.map(k => cell(TENANTS[k].modules[m.key])).join('')}
+    </tr>
+  `).join('');
+}
+
 // ── Boot ──
-init();
+// Show login screen on load — don't call init() yet
+document.addEventListener('DOMContentLoaded', () => {
+  // pre-fill for demo convenience
+  document.getElementById('login-email').value = '';
+  document.getElementById('login-password').value = '';
+});
 </script>
 </body>
 </html>
