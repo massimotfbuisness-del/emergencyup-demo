@@ -570,12 +570,13 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
         <span></span><span></span><span></span>
       </button>
       <div class="topbar-title" id="topbar-title">Dashboard</div>
-      <div class="tenant-switcher">
+      <div class="tenant-switcher" id="tenant-switcher" style="display:none">
         <span>🏢</span>
-        <select id="tenant-select" onchange="currentUser&&currentUser.role==='platform_admin'?enterTenant(this.value):switchTenant(this.value)">
-          <option value="plomb">PlombExpress — Full (phone+dispatch+report+invoice)</option>
-          <option value="fixitpro">FixItPro — Sans téléphone</option>
-          <option value="artisandoc">ArtisanDoc — Report + Invoice only</option>
+        <select id="tenant-select" onchange="enterTenant(this.value)">
+          <option value="plomb">PlombExpress</option>
+          <option value="fixitpro">FixItPro</option>
+          <option value="artisandoc">ArtisanDoc</option>
+          <option value="demo">Demo Company SA</option>
         </select>
       </div>
       <button class="btn btn-primary btn-sm" onclick="openModal('modal-new-int')">+ Nouvelle intervention</button>
@@ -2206,6 +2207,7 @@ function doLogin() {
   if (account.role === 'platform_admin') {
     bootAsAdmin();
   } else {
+    document.getElementById('tenant-switcher').style.display = 'none';
     switchTenant(account.tenant || 'plomb');
     document.getElementById('user-avatar').textContent = account.initials;
     document.getElementById('user-name').textContent = account.name;
@@ -2242,6 +2244,7 @@ function bootAsAdmin() {
     <div class="nav-item" onclick="logout()"><span class="icon">🚪</span>Déconnexion</div>
   `;
 
+  document.getElementById('tenant-switcher').style.display = 'flex';
   navTo('admin');
   renderAdminPanel();
 }
@@ -2585,6 +2588,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (account.role === 'platform_admin') {
           bootAsAdmin();
         } else {
+          document.getElementById('tenant-switcher').style.display = 'none';
           switchTenant(account.tenant || 'plomb');
           document.getElementById('user-avatar').textContent = account.initials;
           document.getElementById('user-name').textContent = account.name;
