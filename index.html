@@ -1435,8 +1435,15 @@ function renderSidebar() {
   items.forEach(item => {
     const cls = `nav-item${item.on ? '' : ' module-off'}${currentPage === item.page ? ' active' : ''}`;
     const badge = item.badge ? `<span class="nav-badge">${item.badge}</span>` : '';
-    const lock = !item.on ? '' : '';
-    html += `<div class="${cls}" id="${item.id}" onclick="${item.page ? `navTo('${item.page}')` : 'showModuleOff()'}">
+    let action;
+    if (item.page) {
+      action = `navTo('${item.page}')`;
+    } else if (item.on) {
+      action = `toast('Accessible depuis une intervention', 'info')`;
+    } else {
+      action = `showModuleOff()`;
+    }
+    html += `<div class="${cls}" id="${item.id}" onclick="${action}">
       <span class="icon">${item.icon}</span>${item.label}${badge}
     </div>`;
   });
