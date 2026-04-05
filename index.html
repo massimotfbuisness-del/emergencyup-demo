@@ -465,22 +465,112 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
 .login-footer { text-align: center; margin-top: 20px; font-size: 12px; color: rgba(255,255,255,0.2); }
 
 /* ── Super Admin Panel ── */
-.admin-banner { background: linear-gradient(135deg, #1a1a2e, #16213e); border-bottom: 2px solid var(--red); padding: 10px 20px; display: flex; align-items: center; gap: 12px; color: #fff; font-size: 13px; }
 .admin-badge { background: var(--red); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 1px; }
-.platform-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
-.tenant-row { background: #fff; border: 1px solid var(--gray-200); border-radius: 10px; padding: 16px 20px; display: grid; grid-template-columns: 40px 1fr 100px 120px 100px 120px; align-items: center; gap: 14px; margin-bottom: 8px; cursor: pointer; transition: box-shadow 0.15s; }
-.tenant-row:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
-.tenant-avatar { width: 36px; height: 36px; border-radius: 8px; background: var(--red); display: flex; align-items: center; justify-content: center; font-size: 16px; color: #fff; }
-.tenant-name-block .tn { font-weight: 600; font-size: 14px; }
-.tenant-name-block .ts { font-size: 11px; color: var(--gray-500); }
-.plan-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+.plan-badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
 .plan-starter { background: var(--gray-100); color: var(--gray-600); }
 .plan-pro { background: #e8eaf6; color: #3949ab; }
 .plan-enterprise { background: #fce4ec; color: #c2185b; }
-.module-dots { display: flex; gap: 3px; flex-wrap: wrap; }
 .mdot { width: 8px; height: 8px; border-radius: 50%; }
 .mdot-on { background: var(--green); }
 .mdot-off { background: var(--gray-200); }
+
+/* ══════════════════════════════════════
+   ADMIN HUB REDESIGN
+══════════════════════════════════════ */
+.admin-kpis { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 28px; }
+.admin-kpi { background: #fff; border-radius: 16px; border: 1px solid var(--gray-200); padding: 22px 24px 20px; box-shadow: var(--shadow-sm); position: relative; overflow: hidden; transition: all 0.2s; }
+.admin-kpi:hover { box-shadow: var(--shadow); transform: translateY(-1px); }
+.admin-kpi-icon { font-size: 26px; margin-bottom: 10px; display: block; line-height: 1; }
+.admin-kpi-value { font-size: 34px; font-weight: 800; line-height: 1; letter-spacing: -1.5px; margin-bottom: 6px; }
+.admin-kpi-label { font-size: 13px; color: var(--gray-600); font-weight: 600; }
+.admin-kpi-sub { font-size: 11px; color: var(--gray-400); margin-top: 3px; }
+.admin-kpi::after { content:''; position:absolute; bottom:0; left:0; right:0; height:3px; border-radius:0 0 16px 16px; }
+.admin-kpi.kpi-green .admin-kpi-value { color: var(--green); } .admin-kpi.kpi-green::after { background: var(--green); }
+.admin-kpi.kpi-red   .admin-kpi-value { color: var(--red); }   .admin-kpi.kpi-red::after   { background: var(--red); }
+.admin-kpi.kpi-blue  .admin-kpi-value { color: var(--blue); }  .admin-kpi.kpi-blue::after  { background: var(--blue); }
+.admin-kpi.kpi-orange .admin-kpi-value { color: var(--orange); } .admin-kpi.kpi-orange::after { background: var(--orange); }
+
+/* CA bars */
+.ca-bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.ca-bar-row:last-child { margin-bottom: 0; }
+.ca-bar-emoji { font-size: 18px; width: 28px; text-align: center; flex-shrink: 0; }
+.ca-bar-label { font-size: 13px; font-weight: 600; color: var(--gray-700); min-width: 140px; }
+.ca-bar-track { flex: 1; height: 10px; background: var(--gray-100); border-radius: 6px; overflow: hidden; }
+.ca-bar-fill { height: 100%; border-radius: 6px; transition: width 0.7s cubic-bezier(0.4,0,0.2,1); }
+.ca-bar-amount { font-size: 13px; font-weight: 700; color: var(--gray-800); min-width: 96px; text-align: right; }
+
+/* Mini bar chart */
+.mini-chart { display: flex; align-items: flex-end; gap: 5px; height: 64px; }
+.mini-bar { flex: 1; border-radius: 4px 4px 0 0; min-height: 4px; transition: all 0.3s; cursor: default; }
+.mini-bar:hover { opacity: 0.75; }
+.mini-chart-labels { display: flex; gap: 5px; margin-top: 5px; }
+.mini-chart-label { flex: 1; text-align: center; font-size: 9px; color: var(--gray-400); font-weight: 600; }
+
+/* Tenant cards */
+.tenant-cards { display: grid; grid-template-columns: repeat(2,1fr); gap: 16px; }
+.tenant-card { background: #fff; border: 1px solid var(--gray-200); border-radius: 16px; padding: 22px; box-shadow: var(--shadow-sm); cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 16px; }
+.tenant-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); border-color: var(--gray-300); }
+.tenant-card:active { transform: translateY(0); box-shadow: var(--shadow-sm); }
+.tenant-card::before { content:''; position:absolute; top:0; left:0; right:0; height:4px; }
+.tc-plomb::before   { background: linear-gradient(90deg, #2563eb, #60a5fa); }
+.tc-fixitpro::before { background: linear-gradient(90deg, var(--orange), #fbbf24); }
+.tc-artisandoc::before { background: linear-gradient(90deg, var(--purple), #a78bfa); }
+.tc-demo::before    { background: linear-gradient(90deg, var(--green), #4ade80); }
+.tc-default::before { background: linear-gradient(90deg, var(--gray-400), var(--gray-300)); }
+.tenant-card-head { display: flex; align-items: flex-start; gap: 14px; }
+.tenant-card-icon { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+.tc-plomb .tenant-card-icon    { background: #dbeafe; }
+.tc-fixitpro .tenant-card-icon { background: #ffedd5; }
+.tc-artisandoc .tenant-card-icon { background: var(--purple-light); }
+.tc-demo .tenant-card-icon     { background: var(--green-light); }
+.tc-default .tenant-card-icon  { background: var(--gray-100); }
+.tenant-card-name { font-size: 17px; font-weight: 800; color: var(--gray-900); letter-spacing: -0.3px; line-height: 1.25; }
+.tenant-card-sub  { font-size: 11.5px; color: var(--gray-400); margin-top: 3px; }
+.tenant-card-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+.tc-stat { background: var(--gray-50); border-radius: 10px; padding: 10px 12px; border: 1px solid var(--gray-100); }
+.tc-stat-val { font-size: 20px; font-weight: 800; color: var(--gray-900); line-height: 1; }
+.tc-stat-lbl { font-size: 10px; color: var(--gray-400); margin-top: 4px; font-weight: 500; }
+.tenant-card-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 4px; }
+
+/* Tenant detail page */
+.tdetail-header { background: #fff; border-bottom: 1px solid var(--gray-200); margin: -28px -28px 0; padding: 20px 28px 0; position: sticky; top: 0; z-index: 10; box-shadow: var(--shadow-sm); }
+.tdetail-back { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--gray-400); cursor: pointer; margin-bottom: 14px; padding: 4px 0; transition: color 0.15s; }
+.tdetail-back:hover { color: var(--red); }
+.tdetail-top { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; flex-wrap: wrap; }
+.tdetail-icon { width: 50px; height: 50px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+.tdetail-name { font-size: 20px; font-weight: 800; letter-spacing: -0.3px; color: var(--gray-900); }
+.tdetail-meta { font-size: 12px; color: var(--gray-500); margin-top: 3px; }
+.tdetail-tabs { display: flex; gap: 0; overflow-x: auto; scrollbar-width: none; }
+.tdetail-tabs::-webkit-scrollbar { display: none; }
+.tdetail-tab { background: none; border: none; border-bottom: 3px solid transparent; padding: 13px 20px; font-size: 14px; font-weight: 600; color: var(--gray-400); cursor: pointer; white-space: nowrap; font-family: inherit; transition: all 0.15s; display: flex; align-items: center; gap: 8px; min-height: 54px; }
+.tdetail-tab:hover { color: var(--gray-700); background: var(--gray-50); }
+.tdetail-tab.active { color: var(--gray-900); border-bottom-color: var(--red); background: none; }
+.tdetail-tab .ti { font-size: 20px; }
+.tdetail-body { padding-top: 28px; }
+.tdetail-section { display: none; }
+.tdetail-section.active { display: block; animation: pageIn 0.18s ease; }
+
+/* Admin layout helpers */
+.admin-two-col { display: grid; grid-template-columns: 1fr 340px; gap: 20px; }
+
+@media (max-width: 900px) { .admin-two-col { grid-template-columns: 1fr; } }
+@media (max-width: 768px) {
+  .admin-kpis { grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+  .admin-kpi { padding: 16px 14px; }
+  .admin-kpi-value { font-size: 26px; }
+  .admin-kpi-icon { font-size: 22px; }
+  .tenant-cards { grid-template-columns: 1fr; }
+  .tdetail-header { margin: -12px -12px 0; padding: 14px 12px 0; }
+  .tdetail-tab { padding: 10px 14px; font-size: 13px; }
+  .tdetail-tab .ti { font-size: 17px; }
+  .ca-bar-label { min-width: 110px; font-size: 12px; }
+  .tdetail-top { gap: 10px; }
+  .tdetail-name { font-size: 17px; }
+}
+@media (max-width: 480px) {
+  .admin-kpis { gap: 8px; }
+  .tdetail-tab .tab-text { display: none; }
+}
 </style>
 </head>
 <body>
@@ -657,50 +747,105 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
         <div class="tech-grid" id="tech-grid"></div>
       </div>
 
-      <!-- PAGE: SUPER ADMIN -->
+      <!-- PAGE: SUPER ADMIN — DASHBOARD -->
       <div class="page" id="page-admin">
-        <div style="margin-bottom:24px">
-          <h2 style="font-size:20px;font-weight:800;margin-bottom:4px">Platform Admin</h2>
-          <p style="color:var(--gray-500);font-size:13px">Vue globale de tous les tenants · accès réservé super admin</p>
-        </div>
-
-        <!-- Platform Stats -->
-        <div class="platform-grid" style="margin-bottom:24px">
-          <div class="stat-card blue"><div class="stat-card-inner"><div><div class="stat-label">Tenants actifs</div><div class="stat-value">4</div><div class="stat-sub">sur la plateforme</div></div><div class="stat-icon">🏢</div></div></div>
-          <div class="stat-card green"><div class="stat-card-inner"><div><div class="stat-label">Interventions totales</div><div class="stat-value">7</div><div class="stat-sub">toutes companies</div></div><div class="stat-icon">📋</div></div></div>
-          <div class="stat-card orange"><div class="stat-card-inner"><div><div class="stat-label">Techniciens</div><div class="stat-value">4</div><div class="stat-sub">profils actifs</div></div><div class="stat-icon">👷</div></div></div>
-        </div>
-
-        <!-- Tenants Table -->
-        <div class="card" style="margin-bottom:24px">
-          <div class="card-header">
-            <div class="card-title">Tous les tenants</div>
-            <button class="btn btn-primary btn-sm" onclick="openNewTenantModal()">+ Nouveau client</button>
+        <!-- Header -->
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:28px">
+          <div>
+            <h2 style="font-size:22px;font-weight:800;letter-spacing:-0.4px;margin-bottom:4px">Platform Admin</h2>
+            <p style="color:var(--gray-500);font-size:13px" id="admin-date-line">Vue globale · toutes entreprises</p>
           </div>
-          <div style="padding:4px 0">
-            <div style="display:grid;grid-template-columns:40px 1fr 100px 120px 100px 120px;gap:14px;padding:10px 20px;font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--gray-100)">
-              <div></div><div>Tenant</div><div>Plan</div><div>Modules actifs</div><div>Interventions</div><div>Action</div>
+          <button class="btn btn-primary" onclick="openNewTenantModal()">+ Nouvelle entreprise</button>
+        </div>
+
+        <!-- KPIs -->
+        <div class="admin-kpis" id="admin-kpis">
+          <div class="admin-kpi kpi-green">
+            <span class="admin-kpi-icon">💶</span>
+            <div class="admin-kpi-value" id="kpi-ca">42 800</div>
+            <div class="admin-kpi-label">CA total CHF</div>
+            <div class="admin-kpi-sub">ce mois · toutes entreprises</div>
+          </div>
+          <div class="admin-kpi kpi-red">
+            <span class="admin-kpi-icon">🚨</span>
+            <div class="admin-kpi-value" id="kpi-int">47</div>
+            <div class="admin-kpi-label">Interventions</div>
+            <div class="admin-kpi-sub">total cumulé plateforme</div>
+          </div>
+          <div class="admin-kpi kpi-blue">
+            <span class="admin-kpi-icon">🏢</span>
+            <div class="admin-kpi-value" id="kpi-tenants">4</div>
+            <div class="admin-kpi-label">Entreprises actives</div>
+            <div class="admin-kpi-sub">sur la plateforme</div>
+          </div>
+          <div class="admin-kpi kpi-orange">
+            <span class="admin-kpi-icon">👷</span>
+            <div class="admin-kpi-value" id="kpi-tech">12</div>
+            <div class="admin-kpi-label">Techniciens</div>
+            <div class="admin-kpi-sub">profils actifs au total</div>
+          </div>
+        </div>
+
+        <!-- Charts row -->
+        <div class="admin-two-col" style="margin-bottom:28px">
+          <!-- CA par entreprise -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">💶 CA par entreprise — ce mois</div>
             </div>
-            <div id="admin-tenant-list"></div>
+            <div class="card-body" id="admin-ca-bars"></div>
+          </div>
+          <!-- Évolution 7 jours -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">📈 Interventions — 7 derniers jours</div>
+            </div>
+            <div class="card-body">
+              <div class="mini-chart" id="admin-chart"></div>
+              <div class="mini-chart-labels" id="admin-chart-labels"></div>
+              <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--gray-100);display:flex;justify-content:space-between;align-items:center">
+                <span style="font-size:12px;color:var(--gray-500)">Total semaine</span>
+                <span style="font-size:16px;font-weight:800;color:var(--gray-900)">47 interventions</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- Module Matrix -->
-        <div class="card">
-          <div class="card-header"><div class="card-title">Matrice modules / tenants</div></div>
-          <div class="card-body" style="overflow-x:auto">
-            <table style="width:100%;border-collapse:collapse;font-size:12px;min-width:700px">
-              <thead>
-                <tr style="border-bottom:2px solid var(--gray-200)">
-                  <th style="text-align:left;padding:8px 12px;font-weight:700;color:var(--gray-700)">Module</th>
-                  <th style="padding:8px 16px;text-align:center;font-weight:700;color:var(--gray-700)">PlombExpress</th>
-                  <th style="padding:8px 16px;text-align:center;font-weight:700;color:var(--gray-700)">FixItPro</th>
-                  <th style="padding:8px 16px;text-align:center;font-weight:700;color:var(--gray-700)">ArtisanDoc</th>
-                </tr>
-              </thead>
-              <tbody id="admin-matrix-body"></tbody>
-            </table>
+        <!-- Entreprises header -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <h3 style="font-size:16px;font-weight:800;letter-spacing:-0.2px;color:var(--gray-900)">Entreprises</h3>
+          <span style="font-size:12px;color:var(--gray-400)">Appuyez sur une carte pour accéder</span>
+        </div>
+
+        <!-- Tenant cards -->
+        <div class="tenant-cards" id="admin-tenant-cards"></div>
+      </div>
+
+      <!-- PAGE: TENANT DETAIL (fiche entreprise) -->
+      <div class="page" id="page-tenant-detail">
+        <!-- Sticky header avec tabs -->
+        <div class="tdetail-header">
+          <div class="tdetail-back" onclick="bootAsAdmin()">← Retour admin</div>
+          <div class="tdetail-top">
+            <div class="tdetail-icon" id="tdetail-icon">🔧</div>
+            <div style="flex:1;min-width:0">
+              <div class="tdetail-name" id="tdetail-name">PlombExpress Sàrl</div>
+              <div class="tdetail-meta" id="tdetail-meta">Pro · 5 interventions · 4 techniciens</div>
+            </div>
+            <button class="btn btn-primary" id="tdetail-enter-btn" onclick="enterTenant(currentTenantDetail)">Ouvrir le tableau de bord →</button>
           </div>
+          <div class="tdetail-tabs" id="tdetail-tabs">
+            <button class="tdetail-tab active" onclick="switchTdetailTab('apercu',this)"><span class="ti">📊</span><span class="tab-text">Aperçu</span></button>
+            <button class="tdetail-tab" onclick="switchTdetailTab('interventions',this)"><span class="ti">🗓️</span><span class="tab-text">Interventions</span></button>
+            <button class="tdetail-tab" onclick="switchTdetailTab('techniciens',this)"><span class="ti">👷</span><span class="tab-text">Techniciens</span></button>
+            <button class="tdetail-tab" onclick="switchTdetailTab('config',this)"><span class="ti">⚙️</span><span class="tab-text">Configuration</span></button>
+          </div>
+        </div>
+        <div class="tdetail-body">
+          <div class="tdetail-section active" id="tdetail-apercu"></div>
+          <div class="tdetail-section" id="tdetail-interventions"></div>
+          <div class="tdetail-section" id="tdetail-techniciens"></div>
+          <div class="tdetail-section" id="tdetail-config"></div>
         </div>
       </div>
 
@@ -718,6 +863,7 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
               <button class="stab" data-tab="modules-tab" onclick="switchSettingsTab('modules-tab')">🔧 Modules</button>
               <button class="stab" data-tab="integrations" onclick="switchSettingsTab('integrations')">🔗 Intégrations</button>
               <button class="stab" data-tab="compte" onclick="switchSettingsTab('compte')">👤 Compte</button>
+              <button class="stab" data-tab="technique" onclick="switchSettingsTab('technique')">🛠️ Technique</button>
             </nav>
           </div>
         </div>
@@ -961,6 +1107,28 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
             </div>
           </div>
 
+          <!-- ═══ TECHNIQUE ═══ -->
+          <div class="stab-content" id="stab-technique">
+            <div class="settings-section">
+              <div class="settings-section-title">Matrice modules / entreprises</div>
+              <p style="font-size:12px;color:var(--gray-500);margin-bottom:16px">Vue technique — modules activés par entreprise sur la plateforme.</p>
+              <div style="overflow-x:auto">
+                <table style="width:100%;border-collapse:collapse;font-size:12px;min-width:600px">
+                  <thead>
+                    <tr style="border-bottom:2px solid var(--gray-200)">
+                      <th style="text-align:left;padding:9px 12px;font-weight:700;color:var(--gray-700)">Module</th>
+                      <th style="padding:9px 14px;text-align:center;font-weight:700;color:var(--gray-700)">PlombExpress</th>
+                      <th style="padding:9px 14px;text-align:center;font-weight:700;color:var(--gray-700)">FixItPro</th>
+                      <th style="padding:9px 14px;text-align:center;font-weight:700;color:var(--gray-700)">ArtisanDoc</th>
+                      <th style="padding:9px 14px;text-align:center;font-weight:700;color:var(--gray-700)">Demo Co.</th>
+                    </tr>
+                  </thead>
+                  <tbody id="settings-matrix-body"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -1138,6 +1306,19 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; back
 // ═══════════════════════════════════════════════════════════
 // DATA — issu du seed SQL 001_test_data.sql
 // ═══════════════════════════════════════════════════════════
+
+// Mock business stats per tenant
+const TENANT_STATS = {
+  plomb:      { ca: 28400, interventions: 32, technicians: 4, avg: 888,  color: '#2563eb', services: { 'Plomberie': 18200, 'Chauffage': 7400, 'Serrurerie': 2800 } },
+  fixitpro:   { ca: 9200,  interventions: 11, technicians: 2, avg: 836,  color: '#f57c00', services: { 'Plomberie': 5100, 'Électricité': 4100 } },
+  artisandoc: { ca: 3800,  interventions: 2,  technicians: 1, avg: 1900, color: '#7c3aed', services: { 'Dépannage': 3800 } },
+  demo:       { ca: 1400,  interventions: 2,  technicians: 0, avg: 700,  color: '#16a34a', services: { 'Dépannage': 1400 } },
+};
+const WEEKLY_DATA  = [6, 8, 5, 11, 7, 9, 8]; // Lun→Dim
+const WEEKLY_DAYS  = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+const TENANT_EMOJIS = { plomb:'🔧', fixitpro:'⚡', artisandoc:'📝', demo:'🏢' };
+
+let currentTenantDetail = null;
 
 const TENANTS = {
   plomb: {
@@ -1374,8 +1555,23 @@ function switchTenant(tid) {
 }
 
 function tenantEmoji(tid) {
-  const map = { plomb:'🔧', fixitpro:'⚡', artisandoc:'📝' };
-  return map[tid] || '🏢';
+  return TENANT_EMOJIS[tid] || '🏢';
+}
+
+// ── Helper: render one intervention row (shared between dashboard & tdetail) ──
+function renderIntRowHTML(int) {
+  const customer = CUSTOMERS.find(c=>c.id===int.customer_id)||{name:'—',address:'—'};
+  const statusLabels = { new_request:'Nouvelle',qualified:'Qualifiée',assigned:'Assignée',on_route:'En route',in_progress:'En cours',completed:'Terminée',closed:'Clôturée',rejected_out_of_zone:'Hors zone' };
+  const urgencyClass = { critical:'badge-critical', urgent:'badge-urgent', standard:'badge-standard', low:'badge-low' };
+  return `
+    <div class="int-row${int.urgency==='critical'?' urgent-row':''}" onclick="navTo('detail','${int.id}')">
+      <div><div class="int-id">#${int.ref}</div></div>
+      <div><div class="int-client">${customer.name}</div><div class="int-addr">${customer.address}, ${customer.city}</div></div>
+      <div><span class="badge ${urgencyClass[int.urgency]||'badge-standard'}">${int.urgency}</span></div>
+      <div><span class="badge badge-${int.status}">${statusLabels[int.status]||int.status}</span></div>
+      <div style="font-size:12px;color:var(--gray-500)">${int.type}</div>
+      <div style="font-size:11px;color:var(--gray-400)">${int.created_at}</div>
+    </div>`;
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1386,7 +1582,7 @@ function navTo(page, intId) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
   currentPage = page;
-  const titles = { dashboard:'Dashboard', detail:'Intervention', report:'Rapport', invoice:'Facture', technicians:'Techniciens', modules:'Modules', admin:'Platform Admin' };
+  const titles = { dashboard:'Dashboard', detail:'Intervention', report:'Rapport', invoice:'Facture', technicians:'Techniciens', modules:'Paramètres', admin:'Platform Admin', 'tenant-detail':'Fiche entreprise' };
   document.getElementById('topbar-title').textContent = titles[page] || page;
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   const navMap = { dashboard: 'nav-dashboard', technicians: 'nav-tech', modules: 'nav-modules' };
@@ -2242,11 +2438,11 @@ function bootAsAdmin() {
   const nav = document.getElementById('sidebar-nav');
   nav.innerHTML = `
     <div class="nav-section">Platform</div>
-    <div class="nav-item active" id="nav-admin" onclick="navTo('admin')"><span class="icon">🏛️</span>Platform Admin</div>
-    <div class="nav-section">Tenants</div>
-    <div class="nav-item" onclick="enterTenant('plomb')"><span class="icon">🔧</span>PlombExpress Sàrl</div>
-    <div class="nav-item" onclick="enterTenant('fixitpro')"><span class="icon">⚡</span>FixItPro SARL</div>
-    <div class="nav-item" onclick="enterTenant('artisandoc')"><span class="icon">📝</span>ArtisanDoc</div>
+    <div class="nav-item active" id="nav-admin" onclick="navTo('admin')"><span class="icon">🏛️</span>Dashboard Admin</div>
+    <div class="nav-section">Entreprises</div>
+    ${Object.entries(TENANTS).map(([key,t])=>`
+      <div class="nav-item" onclick="showTenantDetail('${key}')"><span class="icon">${TENANT_EMOJIS[key]||'🏢'}</span>${t.name.split(' ')[0]}</div>
+    `).join('')}
     <div class="nav-section">Compte</div>
     <div class="nav-item" onclick="logout()"><span class="icon">🚪</span>Déconnexion</div>
   `;
@@ -2299,73 +2495,322 @@ function logout() {
 // ═══════════════════════════════════════════════════════════
 
 function renderAdminPanel() {
-  // Tenant list
-  const tenantList = document.getElementById('admin-tenant-list');
-  if (!tenantList) return;
+  renderAdminDashboard();
+}
 
+function renderAdminDashboard() {
   const plans = { starter:'plan-starter', pro:'plan-pro', enterprise:'plan-enterprise' };
-  const tenantIntCount = { plomb: 5, fixitpro: 0, artisandoc: 0, demo: 2 };
-  const tenantEmojis = { plomb:'🔧', fixitpro:'⚡', artisandoc:'📝', ...Object.fromEntries(Object.keys(TENANTS).filter(k=>!['plomb','fixitpro','artisandoc'].includes(k)).map(k=>[k,'🏢'])) };
 
-  tenantList.innerHTML = Object.entries(TENANTS).map(([key, t]) => {
+  // ── KPI totals ──
+  const totalCA   = Object.values(TENANT_STATS).reduce((s,t)=>s+t.ca,0);
+  const totalInt  = Object.values(TENANT_STATS).reduce((s,t)=>s+t.interventions,0);
+  const totalTech = Object.values(TENANT_STATS).reduce((s,t)=>s+t.technicians,0);
+  const totalTenants = Object.keys(TENANTS).length;
+  const fmtCA = n => n.toLocaleString('fr-CH');
+
+  const kpiCA = document.getElementById('kpi-ca');
+  const kpiInt = document.getElementById('kpi-int');
+  const kpiTen = document.getElementById('kpi-tenants');
+  const kpiTech = document.getElementById('kpi-tech');
+  if (kpiCA) kpiCA.textContent = fmtCA(totalCA);
+  if (kpiInt) kpiInt.textContent = totalInt;
+  if (kpiTen) kpiTen.textContent = totalTenants;
+  if (kpiTech) kpiTech.textContent = totalTech;
+
+  // ── CA bars ──
+  const barsEl = document.getElementById('admin-ca-bars');
+  if (barsEl) {
+    const maxCA = Math.max(...Object.values(TENANT_STATS).map(t=>t.ca));
+    barsEl.innerHTML = Object.entries(TENANTS).map(([key, t]) => {
+      const s = TENANT_STATS[key] || { ca:0, color:'#9ca3af' };
+      const pct = Math.round((s.ca / maxCA) * 100);
+      return `
+        <div class="ca-bar-row">
+          <div class="ca-bar-emoji">${TENANT_EMOJIS[key]||'🏢'}</div>
+          <div class="ca-bar-label">${t.name.split(' ')[0]}</div>
+          <div class="ca-bar-track"><div class="ca-bar-fill" style="width:${pct}%;background:${s.color}"></div></div>
+          <div class="ca-bar-amount">${fmtCA(s.ca)} CHF</div>
+        </div>`;
+    }).join('');
+  }
+
+  // ── Weekly chart ──
+  const chartEl  = document.getElementById('admin-chart');
+  const labelsEl = document.getElementById('admin-chart-labels');
+  if (chartEl) {
+    const maxVal = Math.max(...WEEKLY_DATA);
+    const colors = ['#dbeafe','#bfdbfe','#93c5fd','#2563eb','#bfdbfe','#93c5fd','#60a5fa'];
+    chartEl.innerHTML = WEEKLY_DATA.map((v,i) => {
+      const h = Math.round((v/maxVal)*100);
+      return `<div class="mini-bar" style="height:${h}%;background:${v===maxVal?'var(--blue)':colors[i%colors.length]}" title="${v} interventions"></div>`;
+    }).join('');
+  }
+  if (labelsEl) {
+    labelsEl.innerHTML = WEEKLY_DAYS.map(d=>`<div class="mini-chart-label">${d}</div>`).join('');
+  }
+
+  // ── Tenant cards ──
+  const cardsEl = document.getElementById('admin-tenant-cards');
+  if (!cardsEl) return;
+
+  cardsEl.innerHTML = Object.entries(TENANTS).map(([key, t]) => {
+    const s = TENANT_STATS[key] || { ca:0, interventions:0, technicians:0, avg:0 };
     const modOn = Object.values(t.modules).filter(Boolean).length;
-    const modTotal = Object.keys(t.modules).length;
-    const dots = Object.values(t.modules).map(v =>
-      `<div class="mdot ${v?'mdot-on':'mdot-off'}" title="${v?'actif':'inactif'}"></div>`
-    ).join('');
-
+    const planCls = plans[t.plan] || 'plan-starter';
+    const tcClass = ['plomb','fixitpro','artisandoc','demo'].includes(key) ? `tc-${key}` : 'tc-default';
     return `
-      <div class="tenant-row" onclick="enterTenant('${key}')">
-        <div class="tenant-avatar">${tenantEmojis[key]}</div>
-        <div class="tenant-name-block">
-          <div class="tn">${t.name}</div>
-          <div class="ts">slug: ${t.slug} · ${t.timezone}</div>
+      <div class="tenant-card ${tcClass}" onclick="showTenantDetail('${key}')">
+        <div class="tenant-card-head">
+          <div class="tenant-card-icon">${TENANT_EMOJIS[key]||'🏢'}</div>
+          <div style="flex:1;min-width:0">
+            <div class="tenant-card-name">${t.name}</div>
+            <div class="tenant-card-sub">${t.slug} · <span class="plan-badge ${planCls}">${t.plan}</span></div>
+          </div>
         </div>
-        <div><span class="plan-badge ${plans[t.plan]||'plan-starter'}">${t.plan}</span></div>
-        <div>
-          <div style="font-size:11px;color:var(--gray-500);margin-bottom:4px">${modOn}/${modTotal} actifs</div>
-          <div class="module-dots">${dots}</div>
+        <div class="tenant-card-stats">
+          <div class="tc-stat">
+            <div class="tc-stat-val" style="color:var(--green)">${fmtCA(s.ca)}</div>
+            <div class="tc-stat-lbl">CHF ce mois</div>
+          </div>
+          <div class="tc-stat">
+            <div class="tc-stat-val" style="color:var(--red)">${s.interventions}</div>
+            <div class="tc-stat-lbl">interventions</div>
+          </div>
+          <div class="tc-stat">
+            <div class="tc-stat-val">${s.technicians}</div>
+            <div class="tc-stat-lbl">techniciens</div>
+          </div>
         </div>
-        <div style="font-weight:700;font-size:16px;color:var(--gray-800)">${tenantIntCount[key]}</div>
-        <div>
-          <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();enterTenant('${key}')">Entrer →</button>
+        <div class="tenant-card-footer">
+          <div style="font-size:11.5px;color:var(--gray-400)">${modOn} modules actifs · panier moy. ${fmtCA(s.avg)} CHF</div>
+          <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();showTenantDetail('${key}')">Voir →</button>
         </div>
-      </div>
-    `;
+      </div>`;
   }).join('');
+}
 
-  // Module matrix
-  const matrixBody = document.getElementById('admin-matrix-body');
-  if (!matrixBody) return;
+// ═══════════════════════════════════════════════════════════
+// TENANT DETAIL PAGE
+// ═══════════════════════════════════════════════════════════
 
-  const allModules = [
-    { key:'phone_intake', label:'📞 Téléphone Intake' },
-    { key:'dispatch',     label:'⚡ Dispatch' },
-    { key:'report',       label:'📝 Rapports' },
-    { key:'invoice',      label:'💶 Facturation' },
-    { key:'signatures',   label:'✍️ Signatures' },
-    { key:'attachments',  label:'📷 Photos/PJ' },
-    { key:'notifications',label:'🔔 Notifications' },
-    { key:'whatsapp',     label:'💬 WhatsApp' },
-    { key:'contracts',    label:'📃 Contrats' },
-    { key:'client_portal',label:'🌐 Portail client' },
-    { key:'quotes',       label:'📊 Devis' },
-    { key:'sla',          label:'⏱️ SLA' },
-    { key:'analytics',    label:'📈 Analytics' },
-    { key:'white_label',  label:'🎨 White-label' },
+function showTenantDetail(tid) {
+  currentTenantDetail = tid;
+  const t = TENANTS[tid];
+  const s = TENANT_STATS[tid] || {};
+  const plans = { starter:'plan-starter', pro:'plan-pro', enterprise:'plan-enterprise' };
+  const tcClass = ['plomb','fixitpro','artisandoc','demo'].includes(tid) ? `tc-${tid}` : 'tc-default';
+
+  // Update header
+  document.getElementById('tdetail-icon').textContent = TENANT_EMOJIS[tid]||'🏢';
+  document.getElementById('tdetail-icon').className = `tdetail-icon tenant-card-icon ${tcClass}`;
+  document.getElementById('tdetail-name').textContent = t.name;
+  document.getElementById('tdetail-meta').innerHTML = `
+    <span class="plan-badge ${plans[t.plan]||'plan-starter'}">${t.plan}</span>
+    &nbsp;·&nbsp;${s.interventions||0} interventions&nbsp;·&nbsp;${s.technicians||0} techniciens
+  `;
+
+  // Reset tabs
+  document.querySelectorAll('.tdetail-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tdetail-section').forEach(s=>s.classList.remove('active'));
+  document.querySelector('.tdetail-tab').classList.add('active');
+  document.getElementById('tdetail-apercu').classList.add('active');
+
+  navTo('tenant-detail');
+  renderTdetailApercu(tid);
+}
+
+function switchTdetailTab(tab, btn) {
+  document.querySelectorAll('.tdetail-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tdetail-section').forEach(s=>s.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  const sec = document.getElementById(`tdetail-${tab}`);
+  if (sec) sec.classList.add('active');
+  const tid = currentTenantDetail;
+  if (tab==='apercu')        renderTdetailApercu(tid);
+  if (tab==='interventions') renderTdetailInterventions(tid);
+  if (tab==='techniciens')   renderTdetailTechniciens(tid);
+  if (tab==='config')        renderTdetailConfig(tid);
+}
+
+function renderTdetailApercu(tid) {
+  const t = TENANTS[tid];
+  const s = TENANT_STATS[tid] || { ca:0, interventions:0, technicians:0, avg:0 };
+  const fmtCA = n => n.toLocaleString('fr-CH');
+  const modOn = Object.values(t.modules).filter(Boolean).length;
+  const modList = [
+    {key:'phone_intake',label:'📞 Intake'},{key:'whatsapp',label:'💬 WhatsApp'},
+    {key:'dispatch',label:'⚡ Dispatch'},{key:'report',label:'📝 Rapports'},
+    {key:'invoice',label:'💶 Facturation'},{key:'quotes',label:'📊 Devis'},
+    {key:'signatures',label:'✍️ Signatures'},{key:'attachments',label:'📷 Photos'},
+    {key:'notifications',label:'🔔 Notifs'},{key:'sla',label:'⏱️ SLA'},
+    {key:'analytics',label:'📈 Analytics'},{key:'white_label',label:'🎨 White-label'},
   ];
 
-  const tenantKeys = ['plomb','fixitpro','artisandoc','demo'];
-  const cell = v => v
-    ? `<td style="text-align:center;padding:8px"><span style="color:var(--green);font-size:16px">✓</span></td>`
-    : `<td style="text-align:center;padding:8px"><span style="color:var(--gray-300);font-size:14px">—</span></td>`;
+  const recentInts = interventions.slice(0,3);
 
-  matrixBody.innerHTML = allModules.map((m, i) => `
-    <tr style="border-bottom:1px solid var(--gray-100);${i%2===0?'background:var(--gray-50)':''}">
-      <td style="padding:8px 12px;font-size:12px;font-weight:500">${m.label}</td>
-      ${tenantKeys.map(k => cell(TENANTS[k].modules[m.key])).join('')}
-    </tr>
-  `).join('');
+  document.getElementById('tdetail-apercu').innerHTML = `
+    <!-- KPIs -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px">
+      <div class="card" style="padding:18px 20px;text-align:center">
+        <div style="font-size:28px;font-weight:800;color:var(--green);letter-spacing:-1px">${fmtCA(s.ca)}</div>
+        <div style="font-size:11px;color:var(--gray-500);margin-top:4px;font-weight:500">CHF ce mois</div>
+      </div>
+      <div class="card" style="padding:18px 20px;text-align:center">
+        <div style="font-size:28px;font-weight:800;color:var(--red);letter-spacing:-1px">${s.interventions}</div>
+        <div style="font-size:11px;color:var(--gray-500);margin-top:4px;font-weight:500">Interventions</div>
+      </div>
+      <div class="card" style="padding:18px 20px;text-align:center">
+        <div style="font-size:28px;font-weight:800;color:var(--blue);letter-spacing:-1px">${s.technicians}</div>
+        <div style="font-size:11px;color:var(--gray-500);margin-top:4px;font-weight:500">Techniciens</div>
+      </div>
+      <div class="card" style="padding:18px 20px;text-align:center">
+        <div style="font-size:28px;font-weight:800;color:var(--orange);letter-spacing:-1px">${fmtCA(s.avg)}</div>
+        <div style="font-size:11px;color:var(--gray-500);margin-top:4px;font-weight:500">Panier moyen CHF</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <!-- CA par service -->
+      <div class="card">
+        <div class="card-header"><div class="card-title">CA par service</div></div>
+        <div class="card-body">
+          ${Object.entries(s.services||{}).map(([svc,ca])=>{
+            const pct = Math.round((ca/s.ca)*100);
+            return `<div style="margin-bottom:12px">
+              <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+                <span style="font-size:13px;font-weight:600">${svc}</span>
+                <span style="font-size:13px;font-weight:700;color:var(--gray-800)">${fmtCA(ca)} CHF</span>
+              </div>
+              <div style="height:8px;background:var(--gray-100);border-radius:4px;overflow:hidden">
+                <div style="height:100%;width:${pct}%;background:${(TENANT_STATS[tid]||{}).color||'var(--blue)'};border-radius:4px"></div>
+              </div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+
+      <!-- Modules actifs -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Modules</div>
+          <span style="font-size:12px;color:var(--gray-500)">${modOn}/${modList.length} actifs</span>
+        </div>
+        <div class="card-body">
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            ${modList.map(m=>`
+              <span style="display:inline-flex;align-items:center;gap:5px;padding:6px 10px;border-radius:8px;font-size:12px;font-weight:600;
+                background:${t.modules[m.key]?'var(--green-light)':'var(--gray-100)'};
+                color:${t.modules[m.key]?'var(--green)':'var(--gray-400)'};
+                border:1px solid ${t.modules[m.key]?'rgba(22,163,74,0.2)':'transparent'}">
+                ${m.label}
+              </span>`).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Interventions récentes -->
+    <div class="card" style="margin-top:20px">
+      <div class="card-header">
+        <div class="card-title">Interventions récentes</div>
+        <button class="btn btn-ghost btn-sm" onclick="switchTdetailTab('interventions',document.querySelectorAll('.tdetail-tab')[1])">Voir tout →</button>
+      </div>
+      <div class="int-list">
+        ${recentInts.length ? recentInts.map(i=>renderIntRowHTML(i)).join('') : '<div class="empty-state" style="padding:24px"><div style="font-size:13px;color:var(--gray-400)">Aucune intervention pour ce tenant dans la démo</div></div>'}
+      </div>
+    </div>
+  `;
+}
+
+function renderTdetailInterventions(tid) {
+  const recentInts = interventions;
+  document.getElementById('tdetail-interventions').innerHTML = `
+    <div class="card">
+      <div class="card-header"><div class="card-title">Toutes les interventions</div></div>
+      <div class="int-list">
+        ${recentInts.length ? recentInts.map(i=>renderIntRowHTML(i)).join('') : '<div class="empty-state" style="padding:32px"><div class="empty-state-icon">📋</div><div class="empty-state-text">Aucune intervention</div></div>'}
+      </div>
+    </div>`;
+}
+
+function renderTdetailTechniciens(tid) {
+  document.getElementById('tdetail-techniciens').innerHTML = `
+    <div class="card">
+      <div class="card-header"><div class="card-title">Équipe terrain</div></div>
+      <div class="card-body">
+        <div class="tech-grid">
+          ${TECHNICIANS.map(tech=>`
+            <div class="tech-card ${tech.status}">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+                <div class="user-avatar" style="background:linear-gradient(135deg,var(--blue),#60a5fa);width:40px;height:40px;font-size:13px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800">${tech.initials}</div>
+                <div>
+                  <div class="tech-name">${tech.name}</div>
+                  <div class="tech-phone">${tech.phone}</div>
+                </div>
+                <div style="margin-left:auto"><span class="badge badge-${tech.status==='available'?'completed':tech.status==='in_progress'?'in_progress':'closed'}">${tech.status==='available'?'Dispo':tech.status==='in_progress'?'En cours':'En route'}</span></div>
+              </div>
+              <div class="tech-specialties">${tech.specialties.map(s=>`<span class="tag">${s}</span>`).join('')}</div>
+            </div>`).join('')}
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderTdetailConfig(tid) {
+  const t = TENANTS[tid];
+  const allModules = [
+    { key:'phone_intake', label:'📞 Téléphone Intake', desc:'Script d\'appel guidé pour qualifier les demandes' },
+    { key:'whatsapp',     label:'💬 WhatsApp 24/24',   desc:'Bot automatisé via GoHighLevel' },
+    { key:'dispatch',     label:'⚡ Dispatch',          desc:'Assignation des techniciens aux interventions' },
+    { key:'report',       label:'📝 Rapports',          desc:'Rapport de fin d\'intervention sur le terrain' },
+    { key:'invoice',      label:'💶 Facturation',       desc:'Génération et envoi de factures client' },
+    { key:'quotes',       label:'📊 Devis',             desc:'Devis avant intervention' },
+    { key:'signatures',   label:'✍️ Signatures',        desc:'Signature électronique sur tablette' },
+    { key:'attachments',  label:'📷 Photos / PJ',       desc:'Photos avant/après et pièces jointes' },
+    { key:'notifications',label:'🔔 Notifications',     desc:'SMS et email automatiques au client' },
+    { key:'sla',          label:'⏱️ SLA',               desc:'Temps de réponse garantis et alertes' },
+    { key:'analytics',    label:'📈 Analytics',         desc:'Tableaux de bord avancés et exports' },
+    { key:'white_label',  label:'🎨 White-label',       desc:'Masquer Emergency Up, marque propre' },
+  ];
+  document.getElementById('tdetail-config').innerHTML = `
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Modules de ${t.name}</div>
+        <span style="font-size:12px;color:var(--gray-500)">${Object.values(t.modules).filter(Boolean).length} actifs</span>
+      </div>
+      <div class="card-body">
+        <div class="module-grid">
+          ${allModules.map(m=>`
+            <div class="module-card">
+              <div class="module-icon">${m.label.split(' ')[0]}</div>
+              <div class="module-info">
+                <div class="module-name">${m.label.split(' ').slice(1).join(' ')}</div>
+                <div class="module-desc">${m.desc}</div>
+              </div>
+              <label class="toggle">
+                <input type="checkbox" ${t.modules[m.key]?'checked':''} onchange="toggleModule('${m.key}',this.checked)">
+                <div class="toggle-track"></div>
+              </label>
+            </div>`).join('')}
+        </div>
+        <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--gray-100)">
+          <div style="font-size:12px;font-weight:700;color:var(--gray-600);margin-bottom:10px">Informations entreprise</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div class="sform-row"><label class="sform-label">Nom</label><input class="text-input" value="${t.name}" /></div>
+            <div class="sform-row"><label class="sform-label">Plan</label>
+              <select class="select-input">
+                <option ${t.plan==='starter'?'selected':''}>starter</option>
+                <option ${t.plan==='pro'?'selected':''}>pro</option>
+                <option ${t.plan==='enterprise'?'selected':''}>enterprise</option>
+              </select>
+            </div>
+          </div>
+          <div style="margin-top:14px;text-align:right">
+            <button class="btn btn-primary" onclick="toast('Configuration sauvegardée','success')">Sauvegarder</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -2495,6 +2940,29 @@ function switchSettingsTab(tab) {
   // render dynamic content per tab
   if (tab === 'modules-tab') renderModules();
   if (tab === 'equipe') renderSettingsTechs();
+  if (tab === 'technique') renderSettingsMatrix();
+}
+
+function renderSettingsMatrix() {
+  const el = document.getElementById('settings-matrix-body');
+  if (!el) return;
+  const allMods = [
+    { key:'phone_intake', label:'📞 Téléphone Intake' }, { key:'whatsapp',label:'💬 WhatsApp' },
+    { key:'dispatch',label:'⚡ Dispatch' },              { key:'report',label:'📝 Rapports' },
+    { key:'invoice',label:'💶 Facturation' },            { key:'quotes',label:'📊 Devis' },
+    { key:'signatures',label:'✍️ Signatures' },          { key:'attachments',label:'📷 Photos/PJ' },
+    { key:'notifications',label:'🔔 Notifications' },    { key:'contracts',label:'📃 Contrats' },
+    { key:'client_portal',label:'🌐 Portail client' },  { key:'sla',label:'⏱️ SLA' },
+    { key:'analytics',label:'📈 Analytics' },            { key:'white_label',label:'🎨 White-label' },
+  ];
+  const cell = v => v
+    ? `<td style="text-align:center;padding:9px"><span style="color:var(--green);font-size:16px;font-weight:700">✓</span></td>`
+    : `<td style="text-align:center;padding:9px"><span style="color:var(--gray-300);font-size:14px">—</span></td>`;
+  el.innerHTML = allMods.map((m,i) => `
+    <tr style="border-bottom:1px solid var(--gray-100);${i%2===0?'background:var(--gray-50)':''}">
+      <td style="padding:9px 12px;font-size:12px;font-weight:500">${m.label}</td>
+      ${Object.keys(TENANTS).map(k=>cell(TENANTS[k].modules[m.key])).join('')}
+    </tr>`).join('');
 }
 
 function renderSettingsTechs() {
